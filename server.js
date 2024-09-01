@@ -1,9 +1,6 @@
-const dgram = require('dgram');
 const express = require('express');
 const mysql = require('mysql2');
 const app = express();
-
-let lastReceivedData = null;
 
 // Conexión a la base de datos MySQL
 const connection = mysql.createConnection({
@@ -21,78 +18,125 @@ connection.connect((err) => {
   console.log('Connected to MySQL as ID', connection.threadId);
 });
 
-// Crear el servidor UDP
-const server = dgram.createSocket('udp4');
-
-// Configurar el servidor UDP para escuchar en el puerto 10000
-server.on('message', (msg, rinfo) => {
-  console.log(`Servidor UDP recibió: ${msg} de ${rinfo.address}:${rinfo.port}`);
-  
-  try {
-    lastReceivedData = JSON.parse(msg);
-    lastReceivedData.address = rinfo.address;
-
-    // Convertir la fecha al formato YYYY-MM-DD
-    const [year, month, day] = lastReceivedData.fecha.split('-');
-    const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-
-    // Insertar datos en la base de datos
-    const sql = `INSERT INTO coordenadas (Latitud, Longitud, Fecha, Hora, ip_address) VALUES (?, ?, ?, ?, ?)`;
-    const values = [lastReceivedData.latitud, lastReceivedData.long, formattedDate, lastReceivedData.hora, lastReceivedData.address];
-
-    connection.query(sql, values, (err, result) => {
-      if (err) throw err;
-      console.log('Datos insertados:', result.insertId);
-    });
-
-    console.log('Datos procesados:', lastReceivedData);
-  } catch (e) {
-    console.error('Error al procesar el JSON recibido:', e);
-  }
-});
-
-// Manejar errores del servidor UDP
-server.on('error', (err) => {
-  console.error(`Servidor UDP error:\n${err.stack}`);
-  server.close();
-});
-
-// Iniciar el servidor UDP
-server.bind(10000, () => {
-  console.log('Servidor UDP está escuchando en el puerto 10000');
-});
-
 // Configuración del servidor HTTP para servir la página web
 app.get('/', (req, res) => {
-    res.send(`
-        <h1>Última ubicación recibida</h1>
-        <div id="data"></div>
-        <script>
-            function fetchData() {
-                fetch('/data')
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('data').innerHTML = 
-                            '<p><strong>Dirección:</strong> ' + data.address + '</p>' +
-                            '<p><strong>Latitud:</strong> ' + data.latitud + '</p>' +
-                            '<p><strong>Longitud:</strong> ' + data.longitud + '</p>' +
-                            '<p><strong>Fecha:</strong> ' + data.fecha + '</p>' +
-                            '<p><strong>Hora:</strong> ' + data.hora + '</p>';
-                    });
-            }
-            setInterval(fetchData, 1000); // Actualiza cada segundo
-            fetchData(); // Llama inmediatamente para cargar datos iniciales
-        </script>
-    `);
+    // Consulta individual de cada columna de la última fila
+    const sql = `
+        SELECT 
+            Latitud,
+            Longitud,
+            Fecha,
+            Hora,
+            ip_address
+        FROM coordenadas
+        ORDER BY id DESC
+        LIMIT 1
+    `;
+
+    connection.query(sql, (err, results) => {
+        if (err) throw err;
+
+        const data = results[0];
+        
+        // Formatear solo la fecha para mostrarla sin la hora
+        const fechaSolo = new Date(data.Fecha).toLocaleDateString();
+
+        res.send(`
+            <h1>Última ubicación recibida</h1>
+            <div id="data">
+                <p><strong>Dirección IP:</strong> ${data.ip_address}</p>
+                <p><strong>Latitud:</strong> ${data.Latitud}</p>
+                <p><strong>Longitud:</strong> ${data.Longitud}</p>
+                <p><strong>Fecha:</strong> ${fechaSolo}</p>
+                <p><strong>Hora:</strong> ${data.Hora}</p>
+            </div>
+            <script>
+                function fetchData() {
+                    fetch('/data')
+                        .then(response => response.json())
+                        .then(data => {
+                            const fechaSolo = new Date(data.Fecha).toLocaleDateString();
+
+                            document.getElementById('data').innerHTML = 
+                                '<p><strong>Dirección IP:</strong> ' + data.ip_address + '</p>' +
+                                '<p><strong>Latitud:</strong> ' + data.Latitud + '</p>' +
+                                '<p><strong>Longitud:</strong> ' + data.Longitud + '</p>' +
+                                '<p><strong>Fecha:</strong> ' + fechaSolo + '</p>' +
+                                '<p><strong>Hora:</strong> ' + data.Hora + '</p>';
+                        });
+                }
+                setInterval(fetchData, 1000); // Actualiza cada segundo
+                fetchData(); // Llama inmediatamente para cargar datos iniciales
+            </script>
+        `);
+    });
 });
 
 // Ruta para obtener los datos más recientes en formato JSON
 app.get('/data', (req, res) => {
-    if (lastReceivedData) {
-        res.json(lastReceivedData);
-    } else {
-        res.json({ message: 'No se han recibido datos aún' });
-    }
+    const sql = `
+        SELECT 
+            Latitud,
+            Longitud,
+            Fecha,
+            Hora,
+            ip_address
+        FROM coordenadas
+        ORDER BY id DESC
+        LIMIT 1
+    `;
+
+    connection.query(sql, (err, results) => {
+        if (err) throw err;
+
+        const data = results[0];
+        data.Fecha = new Date(data.Fecha).toLocaleDateString();  // Formatear solo la fecha
+
+        res.json(data);
+    });
+});
+
+// Ruta para ver todos los datos almacenados en la base de datos
+app.get('/ver-datos', (req, res) => {
+    connection.query('SELECT * FROM coordenadas ORDER BY id DESC', (err, results) => { // Ordena por id descendente
+        if (err) throw err;
+
+        let html = `
+            <h1>Datos almacenados</h1>
+            <table border="1" cellpadding="5" cellspacing="0">
+                <tr>
+                    <th>ID</th>
+                    <th>Latitud</th>
+                    <th>Longitud</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>IP Address</th>
+                    <th>Timestamp</th>
+                </tr>
+        `;
+
+        results.forEach(row => {
+            // Convertir timestamp y fecha a un formato legible
+            const fechaSolo = new Date(row.Fecha).toLocaleDateString();
+            const timestampLocal = new Date(row.timestamp).toLocaleString();
+
+            html += `
+                <tr>
+                    <td>${row.id}</td>
+                    <td>${row.Latitud}</td>
+                    <td>${row.Longitud}</td>
+                    <td>${fechaSolo}</td>
+                    <td>${row.Hora}</td>
+                    <td>${row.ip_address}</td>
+                    <td>${timestampLocal}</td>
+                </tr>
+            `;
+        });
+
+        html += '</table>';
+
+        res.send(html);
+    });
 });
 
 // Iniciar el servidor HTTP
