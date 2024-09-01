@@ -50,6 +50,7 @@ app.get('/', (req, res) => {
                 <p><strong>Fecha:</strong> ${fechaSolo}</p>
                 <p><strong>Hora:</strong> ${data.Hora}</p>
             </div>
+            <button onclick="window.location.href='/ver-datos';">Ver todos los datos almacenados</button>
             <script>
                 function fetchData() {
                     fetch('/data')
