@@ -4,10 +4,10 @@ import json
 
 # Conexión a la base de datos MySQL
 db_connection = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="mysql1004362482",
-    database="alm_rastreo"
+    host= 'localhost',
+    user= 'root',
+    password= 'mysql1004362482',
+    database= 'alm_rastreo'
 )
 cursor = db_connection.cursor()
 

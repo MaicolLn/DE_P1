@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos Almacenados</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Datos almacenados</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>IP Address</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody id="data-rows">
+            <!-- Las filas de datos se insertarán aquí -->
+        </tbody>
+    </table>
+
+    <script>
+        // Obtener los datos desde el endpoint '/api/ver-datos'
+        fetch('/api/ver-datos')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('data-rows');
+                // Vaciar la tabla antes de agregar nuevas filas
+                tbody.innerHTML = '';
+
+                // Insertar cada fila de datos en la tabla
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    const fechaSolo = new Date(row.Fecha).toLocaleDateString();
+                    const timestampLocal = new Date(row.timestamp).toLocaleString();
+
+                    tr.innerHTML = `
+                        <td>${row.id}</td>
+                        <td>${row.Latitud}</td>
+                        <td>${row.Longitud}</td>
+                        <td>${fechaSolo}</td>
+                        <td>${row.Hora}</td>
+                        <td>${row.ip_address}</td>
+                        <td>${timestampLocal}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+</body>
+</html>

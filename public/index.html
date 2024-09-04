@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Última ubicación recibida</title>
+</head>
+<body>
+    <h1>Última ubicación recibida</h1>
+    <div id="data">
+        <p><strong>Dirección IP:</strong> --</p>
+        <p><strong>Latitud:</strong> --</p>
+        <p><strong>Longitud:</strong> --</p>
+        <p><strong>Fecha:</strong> --</p>
+        <p><strong>Hora:</strong> --</p>
+    </div>
+    <button onclick="window.location.href='/ver-datos';">Ver todos los datos almacenados</button>
+    <script>
+        function fetchData() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    const fechaSolo = new Date(data.Fecha).toLocaleDateString();
+
+                    document.getElementById('data').innerHTML = 
+                        '<p><strong>Dirección IP:</strong> ' + data.ip_address + '</p>' +
+                        '<p><strong>Latitud:</strong> ' + data.Latitud + '</p>' +
+                        '<p><strong>Longitud:</strong> ' + data.Longitud + '</p>' +
+                        '<p><strong>Fecha:</strong> ' + fechaSolo + '</p>' +
+                        '<p><strong>Hora:</strong> ' + data.Hora + '</p>';
+                });
+        }
+        setInterval(fetchData, 1000); // Actualiza cada segundo
+        fetchData(); // Llama inmediatamente para cargar datos iniciales
+    </script>
+</body>
+</html>
