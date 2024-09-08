@@ -68,9 +68,9 @@
                     marker.setLatLng([lat, lon]);
 
                     // Solo centrar el mapa si el usuario no ha hecho zoom ni movido el mapa manualmente
-                    if (!userHasZoomed) {
-                        map.setView([lat, lon]); // Centrar sin modificar el zoom actual
-                    }
+                    
+                    map.setView([lat, lon]); // Centrar sin modificar el zoom actual
+                    
                 });
         }
 
