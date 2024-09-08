@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Última ubicación recibida</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        #data {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Última ubicación recibida</h1>
+    <div id="map"></div>
     <div id="data">
         <p><strong>Dirección IP:</strong> --</p>
         <p><strong>Latitud:</strong> --</p>
@@ -15,21 +27,53 @@
         <p><strong>Hora:</strong> --</p>
     </div>
     <button onclick="window.location.href='/ver-datos';">Ver todos los datos almacenados</button>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
+        const map = L.map('map').setView([0, 0], 13); // Inicializa el mapa con un zoom por defecto
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const marker = L.marker([0, 0]).addTo(map);
+        let userHasZoomed = false; // Variable para rastrear si el usuario ha hecho zoom o movido el mapa
+
+        // Detectar si el usuario hace zoom o mueve el mapa
+        map.on('zoomstart', () => {
+            userHasZoomed = true; // Marcar que el usuario ha hecho zoom
+        });
+
+        map.on('movestart', () => {
+            userHasZoomed = true; // Marcar que el usuario ha movido el mapa
+        });
+
         function fetchData() {
             fetch('/data')
                 .then(response => response.json())
                 .then(data => {
                     const fechaSolo = new Date(data.Fecha).toLocaleDateString();
+                    const lat = data.Latitud;
+                    const lon = data.Longitud;
 
                     document.getElementById('data').innerHTML = 
                         '<p><strong>Dirección IP:</strong> ' + data.ip_address + '</p>' +
-                        '<p><strong>Latitud:</strong> ' + data.Latitud + '</p>' +
-                        '<p><strong>Longitud:</strong> ' + data.Longitud + '</p>' +
+                        '<p><strong>Latitud:</strong> ' + lat + '</p>' +
+                        '<p><strong>Longitud:</strong> ' + lon + '</p>' +
                         '<p><strong>Fecha:</strong> ' + fechaSolo + '</p>' +
                         '<p><strong>Hora:</strong> ' + data.Hora + '</p>';
+
+                    // Actualizar solo la posición del marcador
+                    marker.setLatLng([lat, lon]);
+
+                    // Solo centrar el mapa si el usuario no ha hecho zoom ni movido el mapa manualmente
+                    if (!userHasZoomed) {
+                        map.setView([lat, lon]); // Centrar sin modificar el zoom actual
+                    }
                 });
         }
+
         setInterval(fetchData, 1000); // Actualiza cada segundo
         fetchData(); // Llama inmediatamente para cargar datos iniciales
     </script>
