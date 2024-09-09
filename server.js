@@ -5,8 +5,8 @@ const app = express();
 
 // Conexión a la base de datos MySQL
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
+  host: 'database-server.cne06wq0y35e.us-east-1.rds.amazonaws.com',
+  user: 'maicoll',
   password: 'mysql1004362482',
   database: 'alm_rastreo'
 });

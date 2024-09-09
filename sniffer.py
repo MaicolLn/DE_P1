@@ -4,8 +4,8 @@ import json
 
 # Conexión a la base de datos MySQL
 db_connection = mysql.connector.connect(
-    host= 'localhost',
-    user= 'root',
+    host= 'database-server.cne06wq0y35e.us-east-1.rds.amazonaws.com',
+    user= 'maicoll',
     password= 'mysql1004362482',
     database= 'alm_rastreo'
 )
