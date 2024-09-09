@@ -1,2 +1,3 @@
 # Ignorar los archivos de entorno
 .env
+venv/

@@ -13,17 +13,10 @@ print("DB_PASSWORD:", os.getenv('DB_PASSWORD'))
 print("DB_NAME:", os.getenv('DB_NAME'))
 # Conexión a la base de datos MySQL usando variables de entorno
 db_connection = mysql.connector.connect(
-<<<<<<< HEAD
-    host= 'database-server.cne06wq0y35e.us-east-1.rds.amazonaws.com',
-    user= 'maicoll',
-    password= 'mysql1004362482',
-    database= 'alm_rastreo'
-=======
     host=os.getenv('DB_HOST'),
     user=os.getenv('DB_USER'),
     password=os.getenv('DB_PASSWORD'),
     database=os.getenv('DB_NAME')
->>>>>>> 071249bd34d7ebad9070b37e17685039a8f8559f
 )
 cursor = db_connection.cursor()
 

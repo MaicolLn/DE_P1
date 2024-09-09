@@ -8,17 +8,10 @@ require('dotenv').config();
 
 // Conexión a la base de datos MySQL utilizando variables de entorno
 const connection = mysql.createConnection({
-<<<<<<< HEAD
-  host: 'database-server.cne06wq0y35e.us-east-1.rds.amazonaws.com',
-  user: 'maicoll',
-  password: 'mysql1004362482',
-  database: 'alm_rastreo'
-=======
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME
->>>>>>> 071249bd34d7ebad9070b37e17685039a8f8559f
 });
 
 connection.connect((err) => {
