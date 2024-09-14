@@ -49,30 +49,36 @@
             userHasZoomed = true; // Marcar que el usuario ha movido el mapa
         });
 
-        function fetchData() {
-            fetch('/data')
-                .then(response => response.json())
-                .then(data => {
-                    const fechaSolo = new Date(data.Fecha).toLocaleDateString();
-                    const lat = data.Latitud;
-                    const lon = data.Longitud;
+        let coordinates = []; // Array para almacenar el recorrido
+let polyline = L.polyline([], { color: 'blue' }).addTo(map); // Polilínea vacía inicial
 
-                    document.getElementById('data').innerHTML = 
-                        '<p><strong>Dirección IP:</strong> ' + data.ip_address + '</p>' +
-                        '<p><strong>Latitud:</strong> ' + lat + '</p>' +
-                        '<p><strong>Longitud:</strong> ' + lon + '</p>' +
-                        '<p><strong>Fecha:</strong> ' + fechaSolo + '</p>' +
-                        '<p><strong>Hora:</strong> ' + data.Hora + '</p>';
+function fetchData() {
+    fetch('/data')
+        .then(response => response.json())
+        .then(data => {
+            const fechaSolo = new Date(data.Fecha).toLocaleDateString();
+            const lat = data.Latitud;
+            const lon = data.Longitud;
 
-                    // Actualizar solo la posición del marcador
-                    marker.setLatLng([lat, lon]);
+            document.getElementById('data').innerHTML = 
+                '<p><strong>Dirección IP:</strong> ' + data.ip_address + '</p>' +
+                '<p><strong>Latitud:</strong> ' + lat + '</p>' +
+                '<p><strong>Longitud:</strong> ' + lon + '</p>' +
+                '<p><strong>Fecha:</strong> ' + fechaSolo + '</p>' +
+                '<p><strong>Hora:</strong> ' + data.Hora + '</p>';
 
-                    // Solo centrar el mapa si el usuario no ha hecho zoom ni movido el mapa manualmente
-                    
-                    map.setView([lat, lon]); // Centrar sin modificar el zoom actual
-                    
-                });
-        }
+            // Actualizar solo la posición del marcador
+            marker.setLatLng([lat, lon]);
+
+            // Añadir las nuevas coordenadas al array de la polilínea
+            coordinates.push([lat, lon]);
+            polyline.setLatLngs(coordinates); // Actualizar la polilínea con el nuevo recorrido
+
+            // Centrar el mapa sin modificar el zoom actual
+            map.setView([lat, lon]);
+        });
+}
+
 
         setInterval(fetchData, 1000); // Actualiza cada segundo
         fetchData(); // Llama inmediatamente para cargar datos iniciales

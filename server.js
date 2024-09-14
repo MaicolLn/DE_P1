@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Ruta para obtener los datos más recientes
+
 app.get('/data', (req, res) => {
     const sql = `
         SELECT 

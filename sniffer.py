@@ -40,5 +40,4 @@ def process_packet(packet):
         except json.JSONDecodeError:
             print("No se pudo decodificar el JSON")
 
-# Captura los paquetes UDP en el puerto 10000
 sniff(filter="udp port 10000", prn=process_packet)
