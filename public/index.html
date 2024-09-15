@@ -27,6 +27,7 @@
         <p><strong>Hora:</strong> --</p>
     </div>
     <button onclick="window.location.href='/ver-datos';">Ver todos los datos almacenados</button>
+    <button id="clearLineBtn">Eliminar línea</button> <!-- Botón para eliminar la polilínea -->
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -50,38 +51,43 @@
         });
 
         let coordinates = []; // Array para almacenar el recorrido
-let polyline = L.polyline([], { color: 'blue' }).addTo(map); // Polilínea vacía inicial
+        let polyline = L.polyline([], { color: 'blue' }).addTo(map); // Polilínea vacía inicial
 
-function fetchData() {
-    fetch('/data')
-        .then(response => response.json())
-        .then(data => {
-            const fechaSolo = new Date(data.Fecha).toLocaleDateString();
-            const lat = data.Latitud;
-            const lon = data.Longitud;
+        function fetchData() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    const fechaSolo = new Date(data.Fecha).toLocaleDateString();
+                    const lat = data.Latitud;
+                    const lon = data.Longitud;
 
-            document.getElementById('data').innerHTML = 
-                '<p><strong>Dirección IP:</strong> ' + data.ip_address + '</p>' +
-                '<p><strong>Latitud:</strong> ' + lat + '</p>' +
-                '<p><strong>Longitud:</strong> ' + lon + '</p>' +
-                '<p><strong>Fecha:</strong> ' + fechaSolo + '</p>' +
-                '<p><strong>Hora:</strong> ' + data.Hora + '</p>';
+                    document.getElementById('data').innerHTML = 
+                        '<p><strong>Dirección IP:</strong> ' + data.ip_address + '</p>' +
+                        '<p><strong>Latitud:</strong> ' + lat + '</p>' +
+                        '<p><strong>Longitud:</strong> ' + lon + '</p>' +
+                        '<p><strong>Fecha:</strong> ' + fechaSolo + '</p>' +
+                        '<p><strong>Hora:</strong> ' + data.Hora + '</p>';
 
-            // Actualizar solo la posición del marcador
-            marker.setLatLng([lat, lon]);
+                    // Actualizar solo la posición del marcador
+                    marker.setLatLng([lat, lon]);
 
-            // Añadir las nuevas coordenadas al array de la polilínea
-            coordinates.push([lat, lon]);
-            polyline.setLatLngs(coordinates); // Actualizar la polilínea con el nuevo recorrido
+                    // Añadir las nuevas coordenadas al array de la polilínea
+                    coordinates.push([lat, lon]);
+                    polyline.setLatLngs(coordinates); // Actualizar la polilínea con el nuevo recorrido
 
-            // Centrar el mapa sin modificar el zoom actual
-            map.setView([lat, lon]);
+                    // Centrar el mapa sin modificar el zoom actual
+                    map.setView([lat, lon]);
+                });
+        }
+
+        // Botón para eliminar la línea
+        document.getElementById('clearLineBtn').addEventListener('click', () => {
+            coordinates = []; // Limpiar el array de coordenadas
+            polyline.setLatLngs([]); // Eliminar la polilínea visualmente
         });
-}
-
 
         setInterval(fetchData, 1000); // Actualiza cada segundo
         fetchData(); // Llama inmediatamente para cargar datos iniciales
     </script>
 </body>
-</html>dddddd
+</html>
