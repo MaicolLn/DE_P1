@@ -9,6 +9,6 @@ jobs:
         steps: 
             - uses: actions/checkout@v2
             - name: PM2 Restart Server
-              run: sudo pm2 restart server_node
+              run: echo "halo"
             - name: PM2 Restart Sniffer
-              run: sudo pm2 restart sniffer
+              run: echo "helo"
