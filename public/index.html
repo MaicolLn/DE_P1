@@ -17,7 +17,7 @@
     </style>
 </head>
 <body>
-    <h1>Última ubicación recibida</h1>
+    <h1 id="name-title">Última ubicación recibida</h1>
     <div id="map"></div>
     <div id="data">
         <p><strong>Dirección IP:</strong> --</p>
@@ -49,6 +49,18 @@
             userHasZoomed = true; // Marcar que el usuario ha movido el mapa
         });
 
+        // Función para obtener el nombre desde el servidor y actualizar el título
+        function fetchName() {
+            fetch('/name')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('name-title').textContent = data.name;
+                });
+        }
+
+        // Llamar a la función para obtener el nombre
+        fetchName();
+
         function fetchData() {
             fetch('/data')
                 .then(response => response.json())
@@ -68,9 +80,9 @@
                     marker.setLatLng([lat, lon]);
 
                     // Solo centrar el mapa si el usuario no ha hecho zoom ni movido el mapa manualmente
-                    
-                    map.setView([lat, lon]); // Centrar sin modificar el zoom actual
-                    
+                    if (!userHasZoomed) {
+                        map.setView([lat, lon]); // Centrar sin modificar el zoom actual
+                    }
                 });
         }
 
