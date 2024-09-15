@@ -65,6 +65,9 @@ app.get('/api/ver-datos', (req, res) => {
 app.get('/ver-datos', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'ver-datos.html'));
 });
+app.get('/name', (req, res) => {
+    res.json({ name: process.env.NAME });
+});
 
 // Iniciar el servidor HTTP
 const PORT = process.env.PORT || 80;
