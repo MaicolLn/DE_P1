@@ -8,7 +8,9 @@ jobs:
         runs-on: self-hosted
         steps: 
             - uses: actions/checkout@v2
+            - name: Copy .env
+              run: cp varnen/.env actions-runner/_work/DE_P1/DE_P1/
             - name: PM2 Restart Server
-              run: echo "halo"
+              run: sudo pm2 restart server_node
             - name: PM2 Restart Sniffer
-              run: echo "helo"
+              run: sudo pm2 restart sniffer
