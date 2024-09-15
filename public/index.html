@@ -27,6 +27,7 @@
         <p><strong>Hora:</strong> --</p>
     </div>
     <button onclick="window.location.href='/ver-datos';">Ver todos los datos almacenados</button>
+    <button id="clearLineBtn">Eliminar línea</button> <!-- Botón para eliminar la polilínea -->
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -49,6 +50,8 @@
             userHasZoomed = true; // Marcar que el usuario ha movido el mapa
         });
 
+        let coordinates = []; // Array para almacenar el recorrido
+        let polyline = L.polyline([], { color: 'blue' }).addTo(map); // Polilínea vacía inicial
         // Función para obtener el nombre desde el servidor y actualizar el título
         function fetchName() {
             fetch('/name')
@@ -79,12 +82,24 @@
                     // Actualizar solo la posición del marcador
                     marker.setLatLng([lat, lon]);
 
+                    // Añadir las nuevas coordenadas al array de la polilínea
+                    coordinates.push([lat, lon]);
+                    polyline.setLatLngs(coordinates); // Actualizar la polilínea con el nuevo recorrido
+
+                    // Centrar el mapa sin modificar el zoom actual
+                    map.setView([lat, lon]);
                     // Solo centrar el mapa si el usuario no ha hecho zoom ni movido el mapa manualmente
                     if (!userHasZoomed) {
                         map.setView([lat, lon]); // Centrar sin modificar el zoom actual
                     }
                 });
         }
+
+        // Botón para eliminar la línea
+        document.getElementById('clearLineBtn').addEventListener('click', () => {
+            coordinates = []; // Limpiar el array de coordenadas
+            polyline.setLatLngs([]); // Eliminar la polilínea visualmente
+        });
 
         setInterval(fetchData, 1000); // Actualiza cada segundo
         fetchData(); // Llama inmediatamente para cargar datos iniciales
