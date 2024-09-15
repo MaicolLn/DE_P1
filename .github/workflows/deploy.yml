@@ -9,7 +9,7 @@ jobs:
         steps: 
             - uses: actions/checkout@v2
             - name: Copy .env
-              run: cp varnen/.env actions-runner/_work/DE_P1/DE_P1/
+              run: cp ~/varnen/.env .
             - name: PM2 Restart Server
               run: sudo pm2 restart server_node
             - name: PM2 Restart Sniffer
