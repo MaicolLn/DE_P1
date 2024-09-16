@@ -5,7 +5,7 @@ on:
             - main
 jobs:
     build: 
-        runs-on: [MaicolLn, carlos, gabrielR]
+        runs-on: MaicolLn
         steps: 
             - uses: actions/checkout@v2
             - name: Copy .env
