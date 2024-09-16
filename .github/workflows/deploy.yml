@@ -1,36 +1,53 @@
 name: deploy
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
+
 jobs:
-    build: 
-        runs-on: self-hosted
-        steps: 
-            - uses: actions/checkout@v2
-            - name: Copy .env
-              run: cp ~/varnen/.env .
-            - name: PM2 Restart Server
-              run: sudo pm2 restart server_node
-            - name: PM2 Restart Sniffer
-              run: sudo pm2 restart sniffer
-    build: 
-        runs-on: carlos
-        steps: 
-            - uses: actions/checkout@v2
-            - name: Copy .env
-              run: cp ~/varnen/.env .
-            - name: PM2 Restart Server
-              run: sudo pm2 restart server_node
-            - name: PM2 Restart Sniffer
-              run: sudo pm2 restart sniffer
-    build: 
-        runs-on: gabrielR
-        steps: 
-            - uses: actions/checkout@v2
-            - name: Copy .env
-              run: cp ~/varnen/.env .
-            - name: PM2 Restart Server
-              run: sudo pm2 restart server_node
-            - name: PM2 Restart Sniffer
-              run: sudo pm2 restart sniffer
+  deploy_carlos:
+    runs-on: carlosp
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy .env
+        run: cp ~/varnen/.env .
+      - name: PM2 Restart Server
+        run: sudo pm2 restart server_node
+      - name: PM2 Restart Sniffer
+        run: sudo pm2 restart sniffer
+
+  deploy_DE_runner:
+    runs-on: MaicolLn
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy .env
+        run: cp ~/varnen/.env .
+      - name: PM2 Restart Server
+        run: sudo pm2 restart server_node
+      - name: PM2 Restart Sniffer
+        run: sudo pm2 restart sniffer
+
+  deploy_gabrielR:
+    runs-on: gabrielR 
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy .env
+        run: cp ~/varnen/.env .
+      - name: PM2 Restart Server
+        run: sudo pm2 restart server_node
+      - name: PM2 Restart Sniffer
+        run: sudo pm2 restart sniffer
+
+  deploy_santiago:
+    runs-on: santiago 
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy .env
+        run: cp ~/varnen/.env .
+      - name: PM2 Restart Server
+        run: sudo pm2 restart server_node
+      - name: PM2 Restart Sniffer
+        run: sudo pm2 restart sniffer
+        
+
+              
