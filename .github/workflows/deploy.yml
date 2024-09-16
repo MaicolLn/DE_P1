@@ -1,1 +1,16 @@
-
+name: deploy
+on:
+    push:
+        branches:
+            - main
+jobs:
+    build: 
+        runs-on: [self-hosted, gabrielR]
+        steps: 
+            - uses: actions/checkout@v2
+            - name: Copy .env
+              run: cp ~/varnen/.env .
+            - name: PM2 Restart Server
+              run: sudo pm2 restart server_node
+            - name: PM2 Restart Sniffer
+              run: sudo pm2 restart sniffer
