@@ -5,7 +5,7 @@ on:
             - main
 jobs:
     build: 
-        runs-on: [self-hosted, gabrielR]
+        runs-on: [self-hosted, gabrielR, carlos]
         steps: 
             - uses: actions/checkout@v2
             - name: Copy .env
