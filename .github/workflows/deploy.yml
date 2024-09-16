@@ -38,4 +38,16 @@ jobs:
       - name: PM2 Restart Sniffer
         run: sudo pm2 restart sniffer
 
+  deploy_santiago:
+    runs-on: santiago 
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy .env
+        run: cp ~/varnen/.env .
+      - name: PM2 Restart Server
+        run: sudo pm2 restart server_node
+      - name: PM2 Restart Sniffer
+        run: sudo pm2 restart sniffer
+        
+
               
