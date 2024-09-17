@@ -6,19 +6,28 @@ from dotenv import load_dotenv
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
-# Imprimir valores de las variables de entorno para verificación
 print("DB_HOST:", os.getenv('DB_HOST'))
 print("DB_USER:", os.getenv('DB_USER'))
 print("DB_PASSWORD:", os.getenv('DB_PASSWORD'))
 print("DB_NAME:", os.getenv('DB_NAME'))
-# Conexión a la base de datos MySQL usando variables de entorno
-db_connection = mysql.connector.connect(
-    host=os.getenv('DB_HOST'),
-    user=os.getenv('DB_USER'),
-    password=os.getenv('DB_PASSWORD'),
-    database=os.getenv('DB_NAME')
-)
-cursor = db_connection.cursor()
+
+# Función para obtener una nueva conexión
+def get_db_connection():
+    return mysql.connector.connect(
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+        database=os.getenv('DB_NAME')
+    )
+
+# Función para asegurar que la conexión está abierta
+def ensure_connection_open(connection):
+    if not connection.is_connected():
+        print("Reconectando a la base de datos...")
+        connection.reconnect()
+
+# Conexión inicial a la base de datos
+db_connection = get_db_connection()
 
 def process_packet(packet):
     if packet.haslayer(UDP) and packet[UDP].dport == 10000:
@@ -32,12 +41,26 @@ def process_packet(packet):
             hora = data.get('hora')
             ip_address = packet[IP].src
 
+            # Verificar y asegurar que la conexión esté abierta
+            ensure_connection_open(db_connection)
+            
+            cursor = db_connection.cursor()
+
             sql = "INSERT INTO coordenadas (Latitud, Longitud, Fecha, Hora, ip_address) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(sql, (latitud, longitud, fecha, hora, ip_address))
             db_connection.commit()
             print("Datos insertados en la base de datos")
 
+            # Cerrar el cursor después de cada inserción
+            cursor.close()
+
         except json.JSONDecodeError:
             print("No se pudo decodificar el JSON")
+        except mysql.connector.Error as err:
+            print(f"Error de MySQL: {err}")
 
+# Iniciar el sniffer
 sniff(filter="udp port 10000", prn=process_packet)
+
+# Cerrar la conexión al final (si usas alguna señal de finalización)
+db_connection.close()
