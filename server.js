@@ -57,17 +57,33 @@ app.get('/historico', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'historico.html'));
 });
 
-// Ruta para manejar la consulta de histórico
 app.get('/api/historico', (req, res) => {
     const { start, end } = req.query;
+
+    // Agrega este console.log para verificar los valores recibidos
+    console.log('Received start:', start, 'end:', end);
+
     const sql = `
         SELECT Latitud, Longitud, Fecha, Hora
         FROM coordenadas
-        WHERE Fecha BETWEEN ? AND ?
-        ORDER BY Fecha
+        WHERE (Fecha = ? AND Hora >= ?)
+        OR (Fecha > ? AND Fecha < ?)
+        OR (Fecha = ? AND Hora <= ?)
+        ORDER BY Fecha, Hora
     `;
-    
-    connection.query(sql, [start, end], (err, results) => {
+
+    // Extrae las horas y minutos de las fechas
+    const startHour = start.split('T')[1];
+    const endHour = end.split('T')[1];
+
+    // Agrega este console.log para ver la consulta y los parámetros
+    console.log('Executing SQL:', sql, [start.split('T')[0], startHour, start.split('T')[0], end.split('T')[0], end.split('T')[0], endHour]);
+
+    connection.query(sql, [
+        start.split('T')[0], startHour,
+        start.split('T')[0], end.split('T')[0],
+        end.split('T')[0], endHour
+    ], (err, results) => {
         if (err) throw err;
         res.json(results); // Envía los datos como JSON
     });
