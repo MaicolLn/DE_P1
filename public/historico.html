@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Ubicación</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Histórico de Ubicación</h1>
+    <form id="historicalForm">
+        <label for="startDate">Fecha Inicial:</label>
+        <input type="date" id="startDate" required>
+        <label for="startTime">Hora Inicial:</label>
+        <input type="time" id="startTime" required>
+        
+        <label for="endDate">Fecha Final:</label>
+        <input type="date" id="endDate" required>
+        <label for="endTime">Hora Final:</label>
+        <input type="time" id="endTime" required>
+        
+        <button type="submit">Consultar</button>
+    </form>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        document.getElementById('historicalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const startDate = document.getElementById('startDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const endDate = document.getElementById('endDate').value;
+            const endTime = document.getElementById('endTime').value;
+
+            // Combina fecha y hora
+            const startDateTime = `${startDate}T${startTime}`;
+            const endDateTime = `${endDate}T${endTime}`;
+
+            fetch(`/api/historico?start=${startDateTime}&end=${endDateTime}`)
+                .then(response => response.json())
+                .then(data => {
+                    const coordinates = data.map(point => [point.Latitud, point.Longitud]);
+                    L.polyline(coordinates, { color: 'blue' }).addTo(map);
+                    map.fitBounds(coordinates);
+                });
+        });
+    </script>
+</body>
+</html>

@@ -52,6 +52,27 @@ app.get('/data', (req, res) => {
 });
 
 
+// Ruta para servir el archivo HTML de historial
+app.get('/historico', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'historico.html'));
+});
+
+// Ruta para manejar la consulta de histórico
+app.get('/api/historico', (req, res) => {
+    const { start, end } = req.query;
+    const sql = `
+        SELECT Latitud, Longitud, Fecha, Hora
+        FROM coordenadas
+        WHERE Fecha BETWEEN ? AND ?
+        ORDER BY Fecha
+    `;
+    
+    connection.query(sql, [start, end], (err, results) => {
+        if (err) throw err;
+        res.json(results); // Envía los datos como JSON
+    });
+});
+
 
 // Ruta para obtener todos los datos en formato JSON
 app.get('/api/ver-datos', (req, res) => {
