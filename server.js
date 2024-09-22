@@ -52,6 +52,38 @@ app.get('/data', (req, res) => {
 });
 
 
+// Ruta para servir el archivo HTML de historial
+app.get('/historico', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'historico.html'));
+});
+
+app.get('/api/historico', (req, res) => {
+    const { start, end } = req.query;
+
+    // Agrega este console.log para verificar los valores recibidos
+    console.log('Received start:', start, 'end:', end);
+
+    const sql = `
+    SELECT Latitud, Longitud, Fecha, Hora
+    FROM coordenadas
+    WHERE (Fecha > ? OR (Fecha = ? AND Hora >= ?))
+    AND (Fecha < ? OR (Fecha = ? AND Hora <= ?))
+    ORDER BY Fecha, Hora;
+    `;
+
+    // Extrae las horas y minutos de las fechas
+    const startHour = start.split('T')[1];
+    const endHour = end.split('T')[1];
+
+    // Agrega este console.log para ver la consulta y los parámetros
+    console.log('Executing SQL:', sql, [start.split('T')[0], start.split('T')[0], startHour, end.split('T')[0], end.split('T')[0], endHour ]);
+
+    connection.query(sql, [start.split('T')[0], start.split('T')[0], startHour, end.split('T')[0], end.split('T')[0], endHour ], (err, results) => {
+        if (err) throw err;
+        res.json(results); // Envía los datos como JSON
+    });
+});
+
 
 // Ruta para obtener todos los datos en formato JSON
 app.get('/api/ver-datos', (req, res) => {
@@ -70,7 +102,7 @@ app.get('/name', (req, res) => {
 });
 
 // Iniciar el servidor HTTP
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
 });
