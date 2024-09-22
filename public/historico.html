@@ -94,6 +94,7 @@
                 this.value = '';
                 alert('La fecha final no puede ser anterior a la fecha inicial.');
             }
+            updateEndHourOptions();
         });
 
         document.getElementById('startHour').addEventListener('change', updateEndHourOptions);
@@ -111,18 +112,23 @@
             for (let i = 0; i < 24; i++) {
                 endHourSelect.options[i].disabled = false;
             }
-            
-            // Deshabilitar horas anteriores
-            for (let i = 0; i < startHour; i++) {
-                endHourSelect.options[i].disabled = true;
+            for (let i = 0; i < 60; i += 15) {
+                endMinuteSelect.options[i / 15].disabled = false;
             }
 
-            // Si la hora inicial es la misma que la hora de fin, deshabilitar minutos anteriores
-            if (startDate.toDateString() === endDate.toDateString() && startHour === parseInt(endHourSelect.value)) {
-                for (let i = 0; i < 60; i += 15) {
-                    endMinuteSelect.options[i / 15].disabled = false; // Habilitar solo los minutos
-                    if (i <= startMinute) {
-                        endMinuteSelect.options[i / 15].disabled = true; // Deshabilitar minutos anteriores o iguales
+            // Si las fechas son iguales, deshabilitar horas anteriores a la hora de inicio
+            if (startDate.toDateString() === endDate.toDateString()) {
+                for (let i = 0; i < startHour; i++) {
+                    endHourSelect.options[i].disabled = true;
+                }
+
+                // Si la hora inicial es la misma que la hora de fin, deshabilitar minutos anteriores
+                if (startHour === parseInt(endHourSelect.value)) {
+                    for (let i = 0; i < 60; i += 15) {
+                        endMinuteSelect.options[i / 15].disabled = false; // Habilitar todos los minutos primero
+                        if (i <= startMinute) {
+                            endMinuteSelect.options[i / 15].disabled = true; // Deshabilitar minutos anteriores o iguales
+                        }
                     }
                 }
             }
@@ -165,6 +171,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
