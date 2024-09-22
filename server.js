@@ -64,12 +64,11 @@ app.get('/api/historico', (req, res) => {
     console.log('Received start:', start, 'end:', end);
 
     const sql = `
-        SELECT Latitud, Longitud, Fecha, Hora
-        FROM coordenadas
-        WHERE (Fecha = ? AND Hora >= ?)
-        OR (Fecha > ? AND Fecha < ?)
-        OR (Fecha = ? AND Hora <= ?)
-        ORDER BY Fecha, Hora
+    SELECT Latitud, Longitud, Fecha, Hora
+    FROM coordenadas
+    WHERE (Fecha > ? OR (Fecha = ? AND Hora >= ?))
+    AND (Fecha < ? OR (Fecha = ? AND Hora <= ?))
+    ORDER BY Fecha, Hora;
     `;
 
     // Extrae las horas y minutos de las fechas
@@ -77,13 +76,9 @@ app.get('/api/historico', (req, res) => {
     const endHour = end.split('T')[1];
 
     // Agrega este console.log para ver la consulta y los parámetros
-    console.log('Executing SQL:', sql, [start.split('T')[0], startHour, start.split('T')[0], end.split('T')[0], end.split('T')[0], endHour]);
+    console.log('Executing SQL:', sql, [start.split('T')[0], start.split('T')[0], startHour, end.split('T')[0], end.split('T')[0], endHour ]);
 
-    connection.query(sql, [
-        start.split('T')[0], startHour,
-        start.split('T')[0], end.split('T')[0],
-        end.split('T')[0], endHour
-    ], (err, results) => {
+    connection.query(sql, [start.split('T')[0], start.split('T')[0], startHour, end.split('T')[0], end.split('T')[0], endHour ], (err, results) => {
         if (err) throw err;
         res.json(results); // Envía los datos como JSON
     });
