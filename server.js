@@ -102,7 +102,7 @@ app.get('/name', (req, res) => {
 });
 
 // Iniciar el servidor HTTP
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
     console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
 });
