@@ -16,14 +16,14 @@
     <h1>Histórico de Ubicación</h1>
     <form id="historicalForm">
         <label for="startDate">Fecha Inicial:</label>
-        <input type="date" id="startDate" required>
+        <input type="date" id="startDate" required readonly>
         <label for="startTime">Hora Inicial:</label>
-        <input type="time" id="startTime" required>
+        <input type="time" id="startTime" required readonly>
         
         <label for="endDate">Fecha Final:</label>
-        <input type="date" id="endDate" required>
+        <input type="date" id="endDate" required readonly>
         <label for="endTime">Hora Final:</label>
-        <input type="time" id="endTime" required>
+        <input type="time" id="endTime" required readonly>
         
         <button type="submit">Consultar</button>
     </form>
@@ -55,6 +55,17 @@
                     map.fitBounds(coordinates);
                 });
         });
+        
+        // Función para habilitar los campos de fecha y hora
+        function enableInputs() {
+            document.getElementById('startDate').removeAttribute('readonly');
+            document.getElementById('startTime').removeAttribute('readonly');
+            document.getElementById('endDate').removeAttribute('readonly');
+            document.getElementById('endTime').removeAttribute('readonly');
+        }
+
+        // Habilitar los campos al cargar el documento
+        window.onload = enableInputs;
     </script>
 </body>
 </html>
