@@ -8,74 +8,69 @@ require('dotenv').config();
 
 // Conexión a la base de datos MySQL utilizando variables de entorno
 const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
-// Conectar a la base de datos
 connection.connect((err) => {
-    if (err) {
-        console.error('Error de conexión a la base de datos:', err);
-    } else {
-        console.log('Conectado a la base de datos.');
-    }
+  if (err) {
+    console.error('Error connecting to MySQL:', err.stack);
+    return;
+  }
+  console.log('Connected to MySQL as ID', connection.threadId);
 });
 
-// Configurar la carpeta pública para servir archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Ruta para el archivo `index.html`
+// Ruta para servir el archivo HTML principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Ruta para el archivo `historicos.html`
-app.get('/historicos.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'historicos.html'));
-});
 
-// Ruta para obtener el nombre del usuario
-app.get('/name', (req, res) => {
-    res.json({ name: 'DE_test' });
-});
-
-// Ruta para obtener los datos en tiempo real
 app.get('/data', (req, res) => {
-    // Consulta para obtener el último dato en tiempo real
-    const query = 'SELECT * FROM coordenadas ORDER BY id DESC LIMIT 1';
+    const sql = `
+        SELECT 
+            Latitud,
+            Longitud,
+            Fecha,
+            Hora,
+            ip_address
+        FROM coordenadas
+        ORDER BY id DESC
+        LIMIT 1
+    `;
 
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error('Error al obtener los datos:', err);
-            res.status(500).json({ error: 'Error al obtener los datos' });
-        } else {
-            res.json(results[0]);
-        }
+    connection.query(sql, (err, results) => {
+        if (err) throw err;
+
+        const data = results[0];
+        data.Fecha = new Date(data.Fecha).toLocaleDateString();  
+
+        res.json(data);
     });
 });
 
-// Ruta para obtener datos históricos basados en el rango de fechas
-app.get('/api/historical-data', (req, res) => {
-    const { startDate, endDate } = req.query;
 
-    // Consulta para obtener datos en el rango de fechas seleccionado
-    const query = 'SELECT * FROM coordenadas WHERE Fecha BETWEEN ? AND ? ORDER BY Fecha ASC';
 
-    connection.query(query, [startDate, endDate], (err, results) => {
-        if (err) {
-            console.error('Error al obtener los datos históricos:', err);
-            res.status(500).json({ error: 'Error al obtener los datos históricos' });
-        } else {
-            res.json(results);
-        }
+// Ruta para obtener todos los datos en formato JSON
+app.get('/api/ver-datos', (req, res) => {
+    connection.query('SELECT * FROM coordenadas ORDER BY id DESC', (err, results) => {
+        if (err) throw err;
+        res.json(results); // Envía los datos como JSON
     });
 });
 
-// Iniciar el servidor en el puerto 3000
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Servidor escuchando en el puerto ${port}`);
+// Ruta para servir el archivo HTML de "ver-datos"
+app.get('/ver-datos', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'ver-datos.html'));
+});
+app.get('/name', (req, res) => {
+    res.json({ name: process.env.NAME });
+});
+
+// Iniciar el servidor HTTP
+const PORT = process.env.PORT || 80;
+app.listen(PORT, () => {
+    console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
 });
