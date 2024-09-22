@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="name-title">Ubicación recibida - DE _test</title>
+    <title id="name-title">Ubicación recibida - DE _test </title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
@@ -17,7 +17,7 @@
     </style>
 </head>
 <body>
-    <h1>GEOLOCALIZACIÓN EN TIEMPO REAL</h1>
+    <h1>GEOLOCALIZACIÓN</h1>
     <div id="map"></div>
     <div id="data">
         <p><strong>Dirección IP:</strong> --</p>
@@ -28,7 +28,6 @@
     </div>
     <button onclick="window.location.href='/ver-datos';">Ver todos los datos almacenados</button>
     <button id="clearLineBtn">Eliminar línea</button> <!-- Botón para eliminar la polilínea -->
-    <button onclick="window.location.href='/historicos.html';">Consultar Históricos</button> <!-- Botón para ir a la nueva página de históricos -->
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -53,7 +52,6 @@
 
         let coordinates = []; // Array para almacenar el recorrido
         let polyline = L.polyline([], { color: 'blue' }).addTo(map); // Polilínea vacía inicial
-
         // Función para obtener el nombre desde el servidor y actualizar el título
         function fetchName() {
             fetch('/name')
@@ -88,6 +86,8 @@
                     coordinates.push([lat, lon]);
                     polyline.setLatLngs(coordinates); // Actualizar la polilínea con el nuevo recorrido
 
+                    // Centrar el mapa sin modificar el zoom actual
+                    map.setView([lat, lon]);
                     // Solo centrar el mapa si el usuario no ha hecho zoom ni movido el mapa manualmente
                     if (!userHasZoomed) {
                         map.setView([lat, lon]); // Centrar sin modificar el zoom actual
@@ -101,8 +101,8 @@
             polyline.setLatLngs([]); // Eliminar la polilínea visualmente
         });
 
-        setInterval(fetchData, 3000); // Llamar a fetchData cada 3 segundos para actualizar la posición
+        setInterval(fetchData, 1000); // Actualiza cada segundo
+        fetchData(); // Llama inmediatamente para cargar datos iniciales
     </script>
 </body>
 </html>
-
