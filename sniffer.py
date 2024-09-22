@@ -2,10 +2,13 @@ from scapy.all import sniff, UDP, IP
 import mysql.connector
 import json
 import os
+import time
+import threading
 from dotenv import load_dotenv
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
+
 print("DB_HOST:", os.getenv('DB_HOST'))
 print("DB_USER:", os.getenv('DB_USER'))
 print("DB_PASSWORD:", os.getenv('DB_PASSWORD'))
@@ -45,13 +48,11 @@ def process_packet(packet):
             ensure_connection_open(db_connection)
             
             cursor = db_connection.cursor()
-
             sql = "INSERT INTO coordenadas (Latitud, Longitud, Fecha, Hora, ip_address) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(sql, (latitud, longitud, fecha, hora, ip_address))
             db_connection.commit()
             print("Datos insertados en la base de datos")
 
-            # Cerrar el cursor después de cada inserción
             cursor.close()
 
         except json.JSONDecodeError:
@@ -59,8 +60,24 @@ def process_packet(packet):
         except mysql.connector.Error as err:
             print(f"Error de MySQL: {err}")
 
+def keep_alive():
+    while True:
+        try:
+            ensure_connection_open(db_connection)
+            cursor = db_connection.cursor()
+            cursor.execute("SELECT 1")  # Consulta ligera para mantener viva la conexión
+            cursor.close()
+            print("Keep-alive enviado")
+        except Exception as e:
+            print(f"Error en keep-alive: {e}")
+        time.sleep(300)  # Cada 5 minutos
+
+# Iniciar el thread de keep-alive
+threading.Thread(target=keep_alive, daemon=True).start()
+
 # Iniciar el sniffer
 sniff(filter="udp port 10000", prn=process_packet)
 
 # Cerrar la conexión al final (si usas alguna señal de finalización)
 db_connection.close()
+
