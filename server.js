@@ -1,76 +1,83 @@
-const express = require('express');
-const mysql = require('mysql2');
-const path = require('path');
-const app = express();
+from scapy.all import sniff, UDP, IP
+import mysql.connector
+import json
+import os
+import time
+import threading
+from dotenv import load_dotenv
 
-// Cargar las variables de entorno desde el archivo .env
-require('dotenv').config();
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
-// Conexión a la base de datos MySQL utilizando variables de entorno
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
-});
+print("DB_HOST:", os.getenv('DB_HOST'))
+print("DB_USER:", os.getenv('DB_USER'))
+print("DB_PASSWORD:", os.getenv('DB_PASSWORD'))
+print("DB_NAME:", os.getenv('DB_NAME'))
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err.stack);
-    return;
-  }
-  console.log('Connected to MySQL as ID', connection.threadId);
-});
+# Función para obtener una nueva conexión
+def get_db_connection():
+    return mysql.connector.connect(
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+        database=os.getenv('DB_NAME')
+    )
 
-// Ruta para servir el archivo HTML principal
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+# Función para asegurar que la conexión está abierta
+def ensure_connection_open(connection):
+    if not connection.is_connected():
+        print("Reconectando a la base de datos...")
+        connection.reconnect()
 
+# Conexión inicial a la base de datos
+db_connection = get_db_connection()
 
-app.get('/data', (req, res) => {
-    const sql = `
-        SELECT 
-            Latitud,
-            Longitud,
-            Fecha,
-            Hora,
-            ip_address
-        FROM coordenadas
-        ORDER BY id DESC
-        LIMIT 1
-    `;
+def process_packet(packet):
+    if packet.haslayer(UDP) and packet[UDP].dport == 10000:
+        payload = packet[UDP].payload.load.decode('utf-8')
 
-    connection.query(sql, (err, results) => {
-        if (err) throw err;
+        try:
+            data = json.loads(payload)
+            latitud = data.get('latitud')
+            longitud = data.get('longitud')
+            fecha = data.get('fecha')
+            hora = data.get('hora')
+            ip_address = packet[IP].src
 
-        const data = results[0];
-        data.Fecha = new Date(data.Fecha).toLocaleDateString();  
+            # Verificar y asegurar que la conexión esté abierta
+            ensure_connection_open(db_connection)
+            
+            cursor = db_connection.cursor()
+            sql = "INSERT INTO coordenadas (Latitud, Longitud, Fecha, Hora, ip_address) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(sql, (latitud, longitud, fecha, hora, ip_address))
+            db_connection.commit()
+            print("Datos insertados en la base de datos")
 
-        res.json(data);
-    });
-});
+            cursor.close()
 
+        except json.JSONDecodeError:
+            print("No se pudo decodificar el JSON")
+        except mysql.connector.Error as err:
+            print(f"Error de MySQL: {err}")
 
+def keep_alive():
+    while True:
+        try:
+            ensure_connection_open(db_connection)
+            cursor = db_connection.cursor()
+            cursor.execute("SELECT 1")  # Consulta ligera para mantener viva la conexión
+            cursor.close()
+            print("Keep-alive enviado")
+        except Exception as e:
+            print(f"Error en keep-alive: {e}")
+        time.sleep(300)  # Cada 5 minutos
 
-// Ruta para obtener todos los datos en formato JSON
-app.get('/api/ver-datos', (req, res) => {
-    connection.query('SELECT * FROM coordenadas ORDER BY id DESC', (err, results) => {
-        if (err) throw err;
-        res.json(results); // Envía los datos como JSON
-    });
-});
+# Iniciar el thread de keep-alive
+threading.Thread(target=keep_alive, daemon=True).start()
 
-// Ruta para servir el archivo HTML de "ver-datos"
-app.get('/ver-datos', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'ver-datos.html'));
-});
-app.get('/name', (req, res) => {
-    res.json({ name: process.env.NAME });
-});
+# Iniciar el sniffer
+sniff(filter="udp port 10000", prn=process_packet)
 
-// Iniciar el servidor HTTP
-const PORT = process.env.PORT || 80;
-app.listen(PORT, () => {
-    console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
-});
+# Cerrar la conexión al final (si usas alguna señal de finalización)
+db_connection.close()
+
