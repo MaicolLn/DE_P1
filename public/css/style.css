@@ -13,9 +13,9 @@ body {
     margin-bottom: 10px; /* Espacio entre el logo y el título */
 }
 /* Contenedor de los datos y botón */
-#data {
+#data { /* Fondo azul */
     width: 30%; /* Ancho del contenedor de datos */
-    padding: 20px; /* Espacio alrededor del contenedor */
+    padding: 10px; /* Espacio alrededor del contenedor */
     display: flex;
     flex-direction: column; /* Organizar en columna */
     align-items: center; /* Alinear al centro */
@@ -27,7 +27,8 @@ body {
     margin-top: 10px; /* Espacio entre filas */
 }
 .column {
-    margin-right: 6px; /* Espacio entre columnas */
+   
+    margin-right: 5px; /* Espacio entre columnas */
     flex: 1; /* Para que ambas columnas tengan el mismo ancho */
     text-align: center; /* Alinear texto al centro */
 }
