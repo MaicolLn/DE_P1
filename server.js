@@ -44,12 +44,15 @@ app.get('/data', (req, res) => {
     connection.query(sql, (err, results) => {
         if (err) throw err;
 
+        console.log(results); // Agrega este console.log para verificar los resultados de la base de datos
+
         const data = results[0];
         data.Fecha = new Date(data.Fecha).toLocaleDateString();  
 
         res.json(data);
     });
 });
+
 
 
 // Ruta para servir el archivo HTML de historial
@@ -106,3 +109,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
 });
+
+app.use(express.static(path.join(__dirname, 'public')));
