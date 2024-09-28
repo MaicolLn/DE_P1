@@ -5,7 +5,7 @@ body {
 }
 #map {
     height: 100vh; /* Hacer que el mapa ocupe toda la altura de la ventana */
-    width: 70%; /* Ancho del mapa */
+    width: 97%; /* Ancho del mapa */
 }
 /* Contenedor de los datos y botón */
 #data {
@@ -22,7 +22,7 @@ body {
     margin-top: 10px; /* Espacio entre filas */
 }
 .column {
-    margin-right: 10px; /* Espacio entre columnas */
+    margin-right: 6px; /* Espacio entre columnas */
     flex: 1; /* Para que ambas columnas tengan el mismo ancho */
     text-align: center; /* Alinear texto al centro */
 }
