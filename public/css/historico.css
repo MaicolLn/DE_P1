@@ -1,3 +1,14 @@
+body {  
+    background-color: black; /* Cambiar el fondo de la página a negro */
+    display: flex; /* Usar flexbox para organización */
+}
+#historicalForm {
+    width: 30%; /* Ancho del contenedor de datos */
+    padding: 20px; /* Espacio alrededor del contenedor */
+    display: flex;
+    flex-direction: column; /* Organizar en columna */
+    align-items: center; /* Alinear al centro */
+}
 #map {
     height: 400px;
     width: 100%;
