@@ -3,58 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="name-title">Ubicación recibida - DE _test </title>
+    <title id="name-title">Ubicación recibida - DE _test</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        #map {
-            height: 400px;
-            width: 100%;
+        body {
+            background-color: black; /* Cambiar el fondo de la página a negro */
+            color: white; /* Cambiar el color del texto a blanco para mayor contraste */
+            display: flex; /* Usar flexbox para organización */
         }
+        #map {
+            height: 100vh; /* Hacer que el mapa ocupe toda la altura de la ventana */
+            width: 97%; /* Ancho del mapa */
+        }
+        /* Contenedor de los datos y botón */
         #data {
-            margin-top: 20px;
+            width: 30%; /* Ancho del contenedor de datos */
+            padding: 20px; /* Espacio alrededor del contenedor */
+            display: flex;
+            flex-direction: column; /* Organizar en columna */
+            align-items: center; /* Alinear al centro */
+        }
+        /* Subdivisión de las columnas para latitud/longitud y fecha/hora */
+        .row {
+            display: flex; /* Organizar columnas en fila */
+            width: 100%; /* Hacer que la fila ocupe todo el ancho */
+            margin-top: 10px; /* Espacio entre filas */
+        }
+        .column {
+            margin-right: 10px; /* Espacio entre columnas */
+            flex: 1; /* Para que ambas columnas tengan el mismo ancho */
+            text-align: center; /* Alinear texto al centro */
+        }
+        #data p {
+            margin: 5px;
+            padding: 10px 15px;
+            background-color: #b2dafa; /* Fondo azul */
+            border-radius: 20px; /* Bordes redondeados */
+            color: black; /* Texto negro */
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombras suaves */
+            text-align: center; /* Alinear texto al centro */
+            width: auto;
+        }
+        #data p strong {
+            font-weight: bold;
+        }
+        /* Estilo para centrar el botón */
+        button {
+            background-color: #b2dafa;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: bold;
+            font-family: 'Arial', sans-serif;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px; /* Espacio arriba del botón */
+        }
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>GEOLOCALIZACIÓN</h1>
-    <div id="map"></div>
     <div id="data">
-        <p><strong>Dirección IP:</strong> --</p>
-        <p><strong>Latitud:</strong> --</p>
-        <p><strong>Longitud:</strong> --</p>
-        <p><strong>Fecha:</strong> --</p>
-        <p><strong>Hora:</strong> --</p>
+        <h2>GEOLOCALIZACIÓN</h2>
+        <div class="row">
+            <div class="column">
+                <p><strong>Latitud:</strong> <span id="lat">--</span></p>
+                <p><strong>Longitud:</strong> <span id="lon">--</span></p>
+            </div>
+            <div class="column">
+                <p><strong>Fecha:</strong> <span id="fecha">--</span></p>
+                <p><strong>Hora:</strong> <span id="hora">--</span></p>
+            </div>
+        </div>
+        <p><strong>Dirección IP:</strong> <span id="ip">--</span></p> <!-- Campo IP centrado -->
+        <!-- Botón centrado -->
+        <button onclick="window.location.href='/historico';">Ver historial de ubicación</button>
     </div>
-    <button onclick="window.location.href='/ver-datos';">Ver todos los datos almacenados</button>
-    <button onclick="window.location.href='/historico';">Ver historial de ubicación</button>
-    <button id="clearLineBtn">Eliminar línea</button> <!-- Botón para eliminar la polilínea -->
-    
+
+    <div id="map"></div>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map').setView([0, 0], 17); // Inicializa el mapa con un zoom por defecto
+        const map = L.map('map').setView([0, 0], 17);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
         const marker = L.marker([0, 0]).addTo(map);
-        let userHasZoomed = false; // Variable para rastrear si el usuario ha hecho zoom o movido el mapa
+        let userHasZoomed = false;
 
-        // Detectar si el usuario hace zoom o mueve el mapa
         map.on('zoomstart', () => {
-            userHasZoomed = true; // Marcar que el usuario ha hecho zoom
+            userHasZoomed = true;
         });
 
         map.on('movestart', () => {
-            userHasZoomed = true; // Marcar que el usuario ha movido el mapa
+            userHasZoomed = true;
         });
 
-        let coordinates = []; // Array para almacenar el recorrido
-        let polyline = L.polyline([], { color: 'blue' }).addTo(map); // Polilínea vacía inicial
-        // Función para obtener el nombre desde el servidor y actualizar el título
+        let coordinates = [];
+        let polyline = L.polyline([], { color: 'blue' }).addTo(map);
+
         function fetchName() {
             fetch('/name')
                 .then(response => response.json())
@@ -63,7 +120,6 @@
                 });
         }
 
-        // Llamar a la función para obtener el nombre
         fetchName();
 
         function fetchData() {
@@ -74,37 +130,32 @@
                     const lat = data.Latitud;
                     const lon = data.Longitud;
 
-                    document.getElementById('data').innerHTML = 
-                        '<p><strong>Dirección IP:</strong> ' + data.ip_address + '</p>' +
-                        '<p><strong>Latitud:</strong> ' + lat + '</p>' +
-                        '<p><strong>Longitud:</strong> ' + lon + '</p>' +
-                        '<p><strong>Fecha:</strong> ' + fechaSolo + '</p>' +
-                        '<p><strong>Hora:</strong> ' + data.Hora + '</p>';
+                    document.getElementById('ip').textContent = data.ip_address;
+                    document.getElementById('lat').textContent = lat;
+                    document.getElementById('lon').textContent = lon;
+                    document.getElementById('fecha').textContent = fechaSolo;
+                    document.getElementById('hora').textContent = data.Hora;
 
-                    // Actualizar solo la posición del marcador
                     marker.setLatLng([lat, lon]);
-
-                    // Añadir las nuevas coordenadas al array de la polilínea
                     coordinates.push([lat, lon]);
-                    polyline.setLatLngs(coordinates); // Actualizar la polilínea con el nuevo recorrido
-
-                    // Centrar el mapa sin modificar el zoom actual
+                    polyline.setLatLngs(coordinates);
                     map.setView([lat, lon]);
-                    // Solo centrar el mapa si el usuario no ha hecho zoom ni movido el mapa manualmente
                     if (!userHasZoomed) {
-                        map.setView([lat, lon]); // Centrar sin modificar el zoom actual
+                        map.setView([lat, lon]);
                     }
                 });
         }
 
-        // Botón para eliminar la línea
-        document.getElementById('clearLineBtn').addEventListener('click', () => {
-            coordinates = []; // Limpiar el array de coordenadas
-            polyline.setLatLngs([]); // Eliminar la polilínea visualmente
-        });
-
-        setInterval(fetchData, 1000); // Actualiza cada segundo
-        fetchData(); // Llama inmediatamente para cargar datos iniciales
+        setInterval(fetchData, 1000);
+        fetchData();
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+

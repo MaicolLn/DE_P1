@@ -171,9 +171,7 @@
                     map.fitBounds(coordinates);
 
                     startMarker = L.marker(coordinates[0], { icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/ff0000/marker.png', iconSize: [25, 41] }) }).addTo(map).bindPopup('Inicio').openPopup();
-                    endMarker = L.marker(coordinates[coordinates.length - 1], { icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/00ff00/marker.png', iconSize: [25, 41] }) }).addTo(map).bindPopup('Fin').openPopup();
-                    
-                    // Configurar el slider
+                    endMarker = L.marker(coordinates[coordinates.length - 1], { icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/00ff00/marker.png', iconSize: [25, 41] }) }).addTo(map).bindPopup('Fin').openPopup();           
                     const slider = document.getElementById('slider');
                     slider.max = coordinates.length - 1;
                     slider.style.display = 'block';
