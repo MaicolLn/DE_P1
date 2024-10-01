@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta por Ubicación</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="/css/ubicaciones.css" /> <!-- Enlace al archivo CSS -->
+</head>
+<body>
+
+    <div id="container">
+        <!-- Formulario de consulta -->
+        <form id="locationForm">
+            <img src="logo.png" alt="Logo" id="logo"> <!-- Cambia esta ruta por la de tu logo -->
+            <h1 id="header">Consulta por Ubicación</h1>
+            
+            <div class="row">
+                <div class="column">
+                    <p><strong>Latitud:</strong></p>
+                    <input type="number" id="lat" step="any" required>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="column">
+                    <p><strong>Longitud:</strong></p>
+                    <input type="number" id="lon" step="any" required>
+                </div>   
+            </div>
+            
+            <button type="submit">Consultar</button>
+            
+            <!-- Tabla de resultados -->
+            <table id="resultTable" border="1" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+        </form>
+
+        <!-- Mapa -->
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="/js/ubicaciones.js"></script> <!-- Enlace al archivo JS -->
+</body>
+</html>
