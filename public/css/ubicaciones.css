@@ -1,0 +1,208 @@
+/* Estilos generales */
+body {
+    background-color: black; 
+    display: flex; 
+    color: white;
+    height: 100vh;
+    overflow: hidden; /* Asegurarse de que no haya desplazamiento vertical innecesario */
+}
+
+/* Contenedor principal */
+#container {
+    display: flex;
+    width: 100%;
+}
+
+/* Asegurar que los títulos de las columnas se muestren */
+#resultTable thead th {
+    background-color: #b2f4fa; /* Color de fondo para el encabezado */
+    color: black; /* Color del texto del encabezado */
+    font-weight: bold; /* Negrita para el texto */
+    padding: 10px; /* Espaciado dentro de las celdas */
+    text-align: center; /* Alinear texto al centro */
+    border-bottom: 2px solid #000; /* Línea de separación debajo del encabezado */
+}
+
+/* Estilos para el cuerpo de la tabla */
+#resultTable tbody td {
+    padding: 10px;
+    text-align: center;
+}
+
+
+/* Estilos del formulario */
+#locationForm {
+    width: 30%;  /* Ajustar el ancho del formulario al 30% */
+    padding: 10px; 
+    display: flex;
+    flex-direction: column; 
+    align-items: center; /* Centramos los elementos dentro del formulario */
+    text-align: center;  /* Alinear todo el contenido al centro */
+    margin-top: -20px; /* Subir todo el formulario un poco */
+}
+
+#header {
+    background-color: #b2f4fa;
+    color: black;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px;
+    border-radius: 20px;
+    padding: 10px 15px;
+    margin-bottom: 15px; /* Reducir el espacio debajo del título */
+}
+
+.row {
+    display: flex; 
+    width: 100%; 
+    margin-top: 5px; /* Reducir el espacio entre los campos */
+}
+
+.column {
+    font-family: 'Arial', sans-serif;
+    margin-right: 5px; 
+    flex: 1; 
+    text-align: center;
+}
+
+/* Reducir el tamaño del logo */
+#logo {
+    width: 200px; /* Reducción del ancho del logo */
+    height: auto; 
+    margin-bottom: 5px; /* Reducir el espacio debajo del logo */
+}
+
+/* Estilos de los labels */
+label {
+    color: #b2f4fa; /* Color visible contra el fondo negro */
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    margin-bottom: 5px;
+}
+
+/* Asegurar que los campos de entrada estén centrados */
+input[type="number"] {
+    width: 80%;  /* Ajustar el ancho a un porcentaje para centrar */
+    margin: 10px auto;  /* Centramos el campo usando margin */
+    padding: 10px;
+    background-color: #fff;
+    border: none;
+    border-radius: 5px;
+    color: black;
+    font-size: 12px;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    display: block; /* Asegurarnos que sea un bloque para respetar el margin */
+}
+
+/* Estilos para la tabla */
+#resultTable {
+    width: 100%;
+    max-height: 200px; /* Tamaño fijo de la tabla */
+    overflow-y: auto;  /* Habilitar desplazamiento vertical */
+    display: none; /* Ocultar tabla por defecto */
+    margin-top: 10px; /* Subir la tabla un poco */
+}
+
+/* Asegurar que solo el cuerpo de la tabla tenga scroll */
+#resultTable thead {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+}
+
+#resultTable tbody {
+    display: block;
+    max-height: 150px; /* Altura máxima para las filas */
+    overflow-y: auto;  /* Habilitar desplazamiento en el cuerpo de la tabla */
+}
+
+#resultTable tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* Ajustar las columnas de la tabla */
+}
+
+#resultTable th, #resultTable td {
+    padding: 10px;
+    text-align: left;
+}
+
+/* Estilos del mapa */
+#map {
+    height: 100vh; /* Asegurarse de que el mapa ocupe todo el alto de la ventana */
+    width: 70%; /* El mapa ocupará el 70% del ancho disponible */
+    margin-left: auto;
+}
+
+/* Botón de consulta */
+button {
+    background-color: #b2f4fa;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Subir el botón */
+}
+
+/* Efecto hover para el botón */
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Media Queries para pantallas pequeñas (dispositivos móviles) */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    #locationForm {
+        width: 100%;
+        padding: 10px;
+    }
+
+    #map {
+        width: 100%;
+        height: 50vh; /* Reduce la altura del mapa para móviles */
+    }
+
+    .row {
+        flex-direction: column; /* Coloca las columnas una debajo de la otra */
+        margin-top: 5px;
+    }
+
+    .column {
+        margin-right: 0; /* Quita el margen derecho */
+        margin-bottom: 10px; /* Agrega espacio entre columnas verticales */
+    }
+
+    button {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    #logo {
+        width: 150px; /* Ajusta el tamaño del logo en móviles */
+        margin-bottom: 20px;
+    }
+}
+
+/* Media Queries para tablets (pantallas medianas) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    #locationForm {
+        width: 50%; /* Ajuste de ancho para tablets */
+    }
+
+    #map {
+        height: 70vh; /* Reduce la altura del mapa en tablets */
+    }
+
+    button {
+        font-size: 14px;
+    }
+}

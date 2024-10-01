@@ -60,6 +60,8 @@ app.get('/historico', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'historico.html'));
 });
 
+
+
 app.get('/api/historico', (req, res) => {
     const { start, end } = req.query;
 
@@ -110,4 +112,46 @@ app.listen(PORT, () => {
     console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
 });
 
+
+
+/////////
+
+app.get('/api/consulta-ubicacion', (req, res) => {
+    const { lat, lon } = req.query;
+
+    if (!lat || !lon) {
+        return res.status(400).json({ error: 'Latitud y longitud son requeridas' });
+    }
+
+    // Radio en metros (200 metros en este caso)
+    const radius = 100; // 200 metros
+
+    // Fórmula de Haversine para calcular la distancia entre dos puntos
+    const sql = `
+        SELECT Fecha, Hora, Latitud, Longitud,
+        (6371000 * acos(
+            cos(radians(?)) * cos(radians(Latitud)) * cos(radians(Longitud) - radians(?)) +
+            sin(radians(?)) * sin(radians(Latitud))
+        )) AS distancia
+        FROM coordenadas
+        HAVING distancia <= ?
+        ORDER BY Fecha, Hora;
+    `;
+
+    connection.query(sql, [lat, lon, lat, radius], (err, results) => {
+        if (err) throw err;
+        res.json(results); // Envía los datos como JSON
+    });
+});
+
+// Ruta para servir el archivo HTML de historial
+app.get('/ubicaciones', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'ubicaciones.html'));
+});
+
+
+
+
+
+/////////
 app.use(express.static(path.join(__dirname, 'public')));
