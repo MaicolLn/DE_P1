@@ -123,25 +123,35 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
             slider.style.display = 'block';
 
 
-            const sliderInfo = document.getElementById('slider-info');
+            const sliderlat = document.getElementById('slider-lat');
+            const sliderlon = document.getElementById('slider-lon');
+            const slidertim = document.getElementById('slider-tim');
             // Mover el marcador de posición en el mapa según el slider
             if (positionMarker) {
                 map.removeLayer(positionMarker);
             }
             positionMarker = L.marker(coordinates[0], { icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/808080/marker.png', iconSize: [25, 41] }) }).addTo(map);
-            
+            const latContainer = document.getElementById('lat-container');
+            const lonContainer = document.getElementById('lon-container');
+            const timContainer = document.getElementById('tim-container');
             slider.addEventListener('input', function() {
+                
                 const index = this.value;
                 const latlng = coordinates[index];
                 positionMarker.setLatLng(latlng);
                 map.setView(latlng);
-            
+                latContainer.style.display = 'block';
+                lonContainer.style.display = 'block';
+                timContainer.style.display = 'block';
                 // Cortar la fecha desde la "T"
                 let fechaOriginal = data[index].Fecha;
                 let fecha = fechaOriginal.split('T')[0];  // Obtiene solo la parte de la fecha antes de la "T"
             
                 const timestamp = `${fecha} ${data[index].Hora}` || 'No disponible';
-                sliderInfo.textContent = `Latitud: ${latlng[0]}, Longitud: ${latlng[1]}, Timestamp: ${timestamp}`;
+                sliderlat.textContent = `${latlng[0]}`;
+                sliderlon.textContent = `${latlng[1]}`;
+                slidertim.textContent = `${timestamp}`;
+
             });
         })
         .catch(err => console.error('Error fetching data:', err));

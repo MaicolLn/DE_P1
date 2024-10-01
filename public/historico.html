@@ -28,8 +28,14 @@
         </div>        
         <button type="submit">Consultar</button>
         <input type="range" id="slider" min="0" value="0" step="1" style="display:none;">
+        <div class="row">
+            <div class="column">
+                <p id="lat-container" style="display:none;"> Latitud:  <span id="slider-lat">--</span></p>
+                <p id="lon-container" style="display:none;"> Longitud:  <span id="slider-lon">--</span></p>
+                <p id="tim-container" style="display:none;"> Timestamp:  <span id="slider-tim">--</span></p>
+            </div>
+        </div>
     </form>
-    <div id="slider-info"></div>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
