@@ -17,22 +17,19 @@
                 <p><strong>Fecha Inicial:</strong></p>
                 <input type="datetime-local"  id="startDate" required>
             </div>
-            <div class="column">
-                <p><strong>Hora Inicial:</strong></p>
-                <select id="startHour" required></select>
-                <select id="startMinute" required></select>
-            </div>
-            
+            <div>
+                <select id="startHour" style="display:none;" required></select>
+                <select id="startMinute"style="display:none;" required></select>
+            </div>        
         </div>
         <div class="row" id="endDateSection">
             <div class="column">
                 <p><strong>Fecha Final:</strong></p>
                 <input type="datetime-local" id="endDate" required>
             </div>   
-            <div class="column">    
-                <p><strong>Hora Inicial:</strong></p>
-                <select id="endHour" required></select>
-                <select id="endMinute" required></select>
+            <div>    
+                <select id="endHour" style="display:none;" required></select>
+                <select id="endMinute" style="display:none;" required></select>
             </div>
         </div>        
         <button type="submit">Consultar</button>
