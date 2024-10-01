@@ -51,8 +51,7 @@ document.getElementById('startDate').addEventListener('change', function() {
     // Establecer el mínimo de la fecha final como la fecha inicial seleccionada
     endDateInput.min = this.value;
     
-    // Mostrar la sección de fecha final
-    document.getElementById('endDateSection').style.display = 'block'; 
+
     
     updateEndHourOptions();
 });

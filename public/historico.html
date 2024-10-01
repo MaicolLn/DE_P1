@@ -8,28 +8,37 @@
     <link rel="stylesheet" href="/css/historico.css" /> <!-- Enlace al archivo CSS -->
 </head>
 <body>
-    <h1>Histórico de Ubicación</h1>
+
     <form id="historicalForm">
-        <label for="startDate">Fecha Inicial:</label>
-        <input type="date" id="startDate" required>
-        
-        <label for="startHour">Hora Inicial:</label>
-        <select id="startHour" required></select>
-        <select id="startMinute" required></select>
-        
-        <div id="endDateSection" style="display: none;">
-            <label for="endDate">Fecha Final:</label>
-            <input type="date" id="endDate" required>
+        <img src="logo.png" alt="Logo" id="logo"> <!-- Cambia esta ruta por la de tu logo -->
+        <h1 id="header"> Consulta de historicos</h1>
+        <div class="row">
+            <div class="column">
+                <p><strong>Fecha Inicial:</strong></p>
+                <input type="datetime-local"  id="startDate" required>
+            </div>
+            <div class="column">
+                <p><strong>Hora Inicial:</strong></p>
+                <select id="startHour" required></select>
+                <select id="startMinute" required></select>
+            </div>
             
-            <label for="endHour">Hora Final:</label>
-            <select id="endHour" required></select>
-            <select id="endMinute" required></select>
         </div>
-        
+        <div class="row" id="endDateSection">
+            <div class="column">
+                <p><strong>Fecha Final:</strong></p>
+                <input type="datetime-local" id="endDate" required>
+            </div>   
+            <div class="column">    
+                <p><strong>Hora Inicial:</strong></p>
+                <select id="endHour" required></select>
+                <select id="endMinute" required></select>
+            </div>
+        </div>        
         <button type="submit">Consultar</button>
+        <input type="range" id="slider" min="0" value="0" step="1" style="display:none;">
     </form>
     <div id="map"></div>
-    <input type="range" id="slider" min="0" value="0" step="1" style="display:none;">
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="/js/historico.js"></script> <!-- Enlace al archivo JS -->

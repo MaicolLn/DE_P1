@@ -3,33 +3,45 @@ body {
     color: white; /* Cambiar el color del texto a blanco para mayor contraste */
     display: flex; /* Usar flexbox para organización */
 }
+
 #map {
     height: 100vh; /* Hacer que el mapa ocupe toda la altura de la ventana */
-    width: 97%; /* Ancho del mapa */
+    width: 97%; /* Ancho del mapa en pantallas grandes */
 }
+
+#logo {
+    width: 300px; /* Ajusta el tamaño según necesites */
+    height: auto; /* Mantiene la proporción */
+    margin-bottom: 10px; /* Espacio entre el logo y el título */
+}
+
 /* Contenedor de los datos y botón */
 #data {
-    width: 30%; /* Ancho del contenedor de datos */
-    padding: 20px; /* Espacio alrededor del contenedor */
+    width: 30%; /* Ancho del contenedor de datos en pantallas grandes */
+    padding: 10px; /* Espacio alrededor del contenedor */
     display: flex;
     flex-direction: column; /* Organizar en columna */
     align-items: center; /* Alinear al centro */
 }
+
 /* Subdivisión de las columnas para latitud/longitud y fecha/hora */
 .row {
     display: flex; /* Organizar columnas en fila */
     width: 100%; /* Hacer que la fila ocupe todo el ancho */
     margin-top: 10px; /* Espacio entre filas */
 }
+
 .column {
-    margin-right: 6px; /* Espacio entre columnas */
+    font-family: 'Arial', sans-serif;
+    margin-right: 5px; /* Espacio entre columnas */
     flex: 1; /* Para que ambas columnas tengan el mismo ancho */
     text-align: center; /* Alinear texto al centro */
 }
+
 #data p {
     margin: 5px;
     padding: 10px 15px;
-    background-color: #b2dafa; /* Fondo azul */
+    background-color: #b2f4fa; /* Fondo azul */
     border-radius: 20px; /* Bordes redondeados */
     color: black; /* Texto negro */
     font-family: 'Arial', sans-serif;
@@ -38,12 +50,14 @@ body {
     text-align: center; /* Alinear texto al centro */
     width: auto;
 }
+
 #data p strong {
     font-weight: bold;
 }
+
 /* Estilo para centrar el botón */
 button {
-    background-color: #b2dafa;
+    background-color: #b2f4fa;
     color: black;
     border: none;
     padding: 10px 20px;
@@ -55,6 +69,42 @@ button {
     transition: background-color 0.3s ease;
     margin-top: 20px; /* Espacio arriba del botón */
 }
+
 button:hover {
     background-color: #0056b3;
+}
+
+/* Media queries para hacer el diseño responsive */
+@media (max-width: 1024px) {
+    body {
+        flex-direction: column; /* Cambiar a columna en pantallas más pequeñas */
+    }
+
+    #map {
+        width: 100%; /* Hacer que el mapa ocupe todo el ancho */
+        height: 50vh; /* Ajustar altura del mapa */
+    }
+
+    #data {
+        width: 90%; /* Ajustar el ancho del contenedor de datos */
+    }
+}
+
+@media (max-width: 768px) {
+    #data {
+        width: 95%; /* Ajustar aún más el ancho en dispositivos más pequeños */
+    }
+
+    #logo {
+        width: 80%; /* Hacer el logo más pequeño */
+    }
+
+    #data p {
+        font-size: 10px; /* Ajustar el tamaño de la fuente para que sea legible */
+    }
+
+    button {
+        font-size: 10px; /* Ajustar el tamaño de fuente del botón */
+        padding: 8px 16px; /* Ajustar padding del botón */
+    }
 }
