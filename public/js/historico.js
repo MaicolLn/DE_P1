@@ -45,82 +45,85 @@ setTimeOptions();
 
 // Mostrar la sección de fecha y hora final al seleccionar una fecha inicial
 document.getElementById('startDate').addEventListener('change', function() {
-    const startDate = new Date(this.value);
-    const endDateInput = document.getElementById('endDate');
-    
+    const startDate = new Date(this.value); // Fecha inicial seleccionada
+    const endDateInput = document.getElementById('endDate'); // Campo de fecha final
+    const endDate = new Date(endDateInput.value); // Fecha final actual
+
     // Establecer el mínimo de la fecha final como la fecha inicial seleccionada
     endDateInput.min = this.value;
-    
 
-    
-    updateEndHourOptions();
+    // Verificar si la fecha inicial es mayor a la fecha final
+    if (endDateInput.value && startDate > endDate) {
+        this.value = ''; // Limpiar el campo startDate si es mayor a la fecha final
+        alert('La fecha inicial no puede ser mayor que la fecha final.');
+    } else if (endDateInput.value && startDate.toDateString() === endDate.toDateString()) {
+        // Si los días son iguales, comparar las horas y minutos
+        const startHour = startDate.getHours();
+        const startMinute = startDate.getMinutes();
+        const endHour = endDate.getHours();
+        const endMinute = endDate.getMinutes();
+
+        // Si la hora de inicio es mayor o igual a la hora de fin, limpiar la fecha inicial
+        if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
+            this.value = ''; // Limpiar el campo startDate si la hora es mayor o igual
+            alert('La hora de la fecha inicial no puede ser mayor o igual que la hora de la fecha final.');
+        }
+    }
 });
 
-// Verificar si la fecha final es válida
+
 document.getElementById('endDate').addEventListener('change', function() {
     const endDate = new Date(this.value);
     const startDate = new Date(document.getElementById('startDate').value);
-    
+    const startDateInput = document.getElementById('startDate');
+
+    // Verificar si la fecha final es anterior a la fecha inicial
     if (endDate < startDate) {
         this.value = '';
         alert('La fecha final no puede ser anterior a la fecha inicial.');
+    } else if (endDate.toDateString() === startDate.toDateString()) {
+        // Si los días son iguales, comparar las horas y minutos
+        const endHour = endDate.getHours();
+        const endMinute = endDate.getMinutes();
+        const startHour = startDate.getHours();
+        const startMinute = startDate.getMinutes();
+
+        if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
+            this.value = ''; // Limpiar el campo endDate si la hora de fin es menor o igual a la de inicio
+            alert('La hora de la fecha final no puede ser anterior o igual a la hora de la fecha inicial.');
+        }
     }
-    updateEndHourOptions();
+
+    // Establecer el máximo de la fecha inicial como la fecha final seleccionada
+    startDateInput.max = this.value;
 });
 
-// Actualizar las opciones de hora para la fecha final
-function updateEndHourOptions() {
-    const startHour = parseInt(document.getElementById('startHour').value);
-    const startMinute = parseInt(document.getElementById('startMinute').value);
-    const endDate = new Date(document.getElementById('endDate').value);
-    const startDate = new Date(document.getElementById('startDate').value);
-    const endHourSelect = document.getElementById('endHour');
-    const endMinuteSelect = document.getElementById('endMinute');
 
-    // Habilitar todas las horas y minutos primero
-    for (let i = 0; i < 24; i++) {
-        endHourSelect.options[i].disabled = false;
-    }
-    for (let i = 0; i < 60; i += 15) {
-        endMinuteSelect.options[i / 15].disabled = false;
-    }
-
-    // Si las fechas son iguales, deshabilitar horas anteriores a la hora de inicio
-    if (startDate.toDateString() === endDate.toDateString()) {
-        for (let i = 0; i < startHour; i++) {
-            endHourSelect.options[i].disabled = true;
-        }
-
-        // Si la hora inicial es la misma que la hora de fin, deshabilitar minutos anteriores
-        if (startHour === parseInt(endHourSelect.value)) {
-            for (let i = 0; i < 60; i += 15) {
-                endMinuteSelect.options[i / 15].disabled = false; // Habilitar todos los minutos primero
-                if (i <= startMinute) {
-                    endMinuteSelect.options[i / 15].disabled = true; // Deshabilitar minutos anteriores o iguales
-                }
-            }
-        }
-    }
-}
 
 // Enviar la consulta al servidor para obtener el historial de ubicaciones
 document.getElementById('historicalForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    // Obtener los valores de fecha y hora
-    const startDate = document.getElementById('startDate').value;
-    const startHour = document.getElementById('startHour').value;
-    const startMinute = document.getElementById('startMinute').value;
-    const endDate = document.getElementById('endDate').value;
-    const endHour = document.getElementById('endHour').value;
-    const endMinute = document.getElementById('endMinute').value;
-
-    // Formatear las fechas y horas en formato ISO
-    const startDateTime = `${startDate}T${startHour}:${startMinute}:00`;
-    const endDateTime = `${endDate}T${endHour}:${endMinute}:59`;
+    // Obtener los valores de fecha y hora de los campos de tipo datetime-local
+    const startDateTime = document.getElementById('startDate').value; // Formato "YYYY-MM-DDTHH:MM"
+    const endDateTime = document.getElementById('endDate').value; // Formato "YYYY-MM-DDTHH:MM"
+    
+    // Separar fecha y hora para startDate
+    const [startDate, startTime] = startDateTime.split('T'); // Separar fecha y hora
+    const [endDate, endTime] = endDateTime.split('T'); // Separar fecha y hora para endDate
+    
+    console.log('Fecha de inicio:', startDate);
+    console.log('Hora de inicio:', startTime);
+    
+    console.log('Fecha de fin:', endDate);
+    console.log('Hora de fin:', endTime);
+    
+    // Formatear las fechas y horas en formato ISO para la consulta (opcional)
+    const startDateTimeISO = `${startDate}T${startTime}:00`; // Ejemplo: "YYYY-MM-DDTHH:MM:00"
+    const endDateTimeISO = `${endDate}T${endTime}:59`; // Ejemplo: "YYYY-MM-DDTHH:MM:59"
 
     // Hacer la solicitud al servidor para obtener los datos del historial
-    fetch(`/api/historico?start=${startDateTime}&end=${endDateTime}`)
+    fetch(`/api/historico?start=${startDateTimeISO}&end=${endDateTimeISO}`)
         .then(response => response.json())
         .then(data => {
             const coordinates = data.map(point => [point.Latitud, point.Longitud]);
