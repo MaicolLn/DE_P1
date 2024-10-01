@@ -9,39 +9,12 @@ let endMarker;
 let positionMarker;
 
 // Prevenir que los usuarios escriban directamente en los campos de fecha
-const dateInputs = document.querySelectorAll('input[type="date"]');
+const dateInputs = document.querySelectorAll('input[type="datetime-local"]');
 dateInputs.forEach(input => {
     input.addEventListener('keydown', (e) => {
         e.preventDefault();
     });
 });
-
-// Función para configurar las opciones de horas y minutos
-function setTimeOptions() {
-    const hourSelects = [document.getElementById('startHour'), document.getElementById('endHour')];
-    const minuteSelects = [document.getElementById('startMinute'), document.getElementById('endMinute')];
-
-    hourSelects.forEach(select => {
-        for (let i = 0; i < 24; i++) {
-            const option = document.createElement('option');
-            option.value = String(i).padStart(2, '0');
-            option.textContent = String(i).padStart(2, '0');
-            select.appendChild(option);
-        }
-    });
-
-    minuteSelects.forEach(select => {
-        [0, 15, 30, 45].forEach(minute => {
-            const option = document.createElement('option');
-            option.value = String(minute).padStart(2, '0');
-            option.textContent = String(minute).padStart(2, '0');
-            select.appendChild(option);
-        });
-    });
-}
-
-// Configurar las opciones de tiempo al cargar la página
-setTimeOptions();
 
 // Mostrar la sección de fecha y hora final al seleccionar una fecha inicial
 document.getElementById('startDate').addEventListener('change', function() {
@@ -71,7 +44,6 @@ document.getElementById('startDate').addEventListener('change', function() {
     }
 });
 
-
 document.getElementById('endDate').addEventListener('change', function() {
     const endDate = new Date(this.value);
     const startDate = new Date(document.getElementById('startDate').value);
@@ -97,8 +69,6 @@ document.getElementById('endDate').addEventListener('change', function() {
     // Establecer el máximo de la fecha inicial como la fecha final seleccionada
     startDateInput.max = this.value;
 });
-
-
 
 // Enviar la consulta al servidor para obtener el historial de ubicaciones
 document.getElementById('historicalForm').addEventListener('submit', function(e) {
