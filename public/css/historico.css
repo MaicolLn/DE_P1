@@ -78,17 +78,20 @@ button {
     text-align: center; 
     width: auto;
 }
-#slider-info {
-    position: absolute; /* Posicionarlo sobre el mapa */
-    top: 10px; /* Ajusta la distancia desde la parte superior */
-    right: 10px; /* Ajusta la distancia desde la derecha */
-    background-color: black; /* Fondo semitransparente para que contraste con el mapa */
-    color: #b2f4fa; /* Texto en blanco para mejor visibilidad */
-    padding: 10px; /* Espacio interno alrededor del texto */
-    border-radius: 5px; /* Bordes redondeados */
-    z-index: 1000; /* Asegura que el div se muestre encima del mapa */
-    font-size: 14px; /* Ajusta el tamaño del texto */
+#historicalForm p {
+    margin: 5px;
+    padding: 10px 15px;
+    background-color: #b2f4fa; /* Fondo azul */
+    border-radius: 20px; /* Bordes redondeados */
+    color: black; /* Texto negro */
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombras suaves */
+    text-align: center; /* Alinear texto al centro */
+    width: auto;
+    font-weight: bold;
 }
+
 
 button:hover {
     background-color: #0056b3;
