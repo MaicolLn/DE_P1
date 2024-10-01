@@ -1,17 +1,17 @@
 body {  
-    background-color: black; /* Cambiar el fondo de la página a negro */
-    display: flex; /* Usar flexbox para organización */
-    color: white; /* Cambiar el color del texto a blanco para mayor contraste */
+    background-color: black; 
+    display: flex; 
+    color: white; 
 }
+
 #historicalForm {
-    width: 30%; /* Ancho del contenedor de datos */
-    padding: 20px; /* Espacio alrededor del contenedor */
+    width: 30%; 
+    padding: 10px; 
     display: flex;
-    flex-direction: column; /* Organizar en columna */
-    align-items: center; /* Alinear al centro */
-
-
+    flex-direction: column; 
+    align-items: center; 
 }
+
 #header {
     background-color: #b2f4fa;
     color: black;
@@ -20,27 +20,32 @@ body {
     border-radius: 20px;
     padding: 10px 15px;
 }
+
 .row {
-    display: flex; /* Organizar columnas en fila */
-    width: 100%; /* Hacer que la fila ocupe todo el ancho */
-    margin-top: 10px; /* Espacio entre filas */
+    display: flex; 
+    width: 100%; 
+    margin-top: 10px; 
 }
+
 .column {
     font-family: 'Arial', sans-serif;
     color: black;
-    margin-right: 5px; /* Espacio entre columnas */
-    flex: 1; /* Para que ambas columnas tengan el mismo ancho */
-    text-align: center; /* Alinear texto al centro */
+    margin-right: 5px; 
+    flex: 1; 
+    text-align: center; 
 }
+
 #logo {
-    width: 300px; /* Ajusta el tamaño según necesites */
-    height: auto; /* Mantiene la proporción */
-    margin-bottom: 10px; /* Espacio entre el logo y el título */
+    width: 300px; 
+    height: auto; 
+    margin-bottom: 10px; 
 }
+
 #map {
     height: 100vh;
     width: 97%;
 }
+
 button {
     background-color: #b2f4fa;
     color: black;
@@ -52,27 +57,81 @@ button {
     border-radius: 2px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 20px; /* Espacio arriba del botón */
+    margin-top: 20px; 
 }
 
 #slider {
     display: flex;
     width: 100%;
     margin-top: 20px;
-
 }
+
 #historicalForm p {
     margin: 5px;
     padding: 10px 15px;
-    background-color: #b2f4fa; /* Fondo azul */
-    border-radius: 20px; /* Bordes redondeados */
-    color: black; /* Texto negro */
+    background-color: #b2f4fa; 
+    border-radius: 20px; 
+    color: black; 
     font-family: 'Arial', sans-serif;
     font-size: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombras suaves */
-    text-align: center; /* Alinear texto al centro */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    text-align: center; 
     width: auto;
 }
+
 button:hover {
     background-color: #0056b3;
+}
+
+/* Media Queries para pantallas pequeñas (dispositivos móviles) */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    #historicalForm {
+        width: 100%;
+        padding: 10px;
+    }
+
+    #map {
+        width: 100%;
+        height: 50vh; /* Reduce la altura del mapa para móviles */
+    }
+
+    .row {
+        flex-direction: column; /* Coloca las columnas una debajo de la otra */
+        margin-top: 5px;
+    }
+
+    .column {
+        margin-right: 0; /* Quita el margen derecho */
+        margin-bottom: 10px; /* Agrega espacio entre columnas verticales */
+    }
+
+    button {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    #logo {
+        width: 200px; /* Ajusta el tamaño del logo en móviles */
+        margin-bottom: 20px;
+    }
+}
+
+/* Media Queries para tablets (pantallas medianas) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    #historicalForm {
+        width: 50%; /* Ajuste de ancho para tablets */
+    }
+
+    #map {
+        height: 70vh; /* Reduce la altura del mapa en tablets */
+    }
+
+    button {
+        font-size: 14px;
+    }
 }
