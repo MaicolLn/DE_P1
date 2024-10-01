@@ -78,6 +78,17 @@ button {
     text-align: center; 
     width: auto;
 }
+#slider-info {
+    position: absolute; /* Posicionarlo sobre el mapa */
+    top: 10px; /* Ajusta la distancia desde la parte superior */
+    right: 10px; /* Ajusta la distancia desde la derecha */
+    background-color: black; /* Fondo semitransparente para que contraste con el mapa */
+    color: #b2f4fa; /* Texto en blanco para mejor visibilidad */
+    padding: 10px; /* Espacio interno alrededor del texto */
+    border-radius: 5px; /* Bordes redondeados */
+    z-index: 1000; /* Asegura que el div se muestre encima del mapa */
+    font-size: 14px; /* Ajusta el tamaño del texto */
+}
 
 button:hover {
     background-color: #0056b3;

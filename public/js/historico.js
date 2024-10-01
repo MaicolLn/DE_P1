@@ -122,6 +122,8 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
             slider.max = coordinates.length - 1;
             slider.style.display = 'block';
 
+
+            const sliderInfo = document.getElementById('slider-info');
             // Mover el marcador de posición en el mapa según el slider
             if (positionMarker) {
                 map.removeLayer(positionMarker);
@@ -133,6 +135,13 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
                 const latlng = coordinates[index];
                 positionMarker.setLatLng(latlng);
                 map.setView(latlng);
+            
+                // Cortar la fecha desde la "T"
+                let fechaOriginal = data[index].Fecha;
+                let fecha = fechaOriginal.split('T')[0];  // Obtiene solo la parte de la fecha antes de la "T"
+            
+                const timestamp = `${fecha} ${data[index].Hora}` || 'No disponible';
+                sliderInfo.textContent = `Latitud: ${latlng[0]}, Longitud: ${latlng[1]}, Timestamp: ${timestamp}`;
             });
         })
         .catch(err => console.error('Error fetching data:', err));
