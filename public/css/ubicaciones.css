@@ -34,7 +34,7 @@ body {
 }
 
 #logo {
-    width: 300px; /* Reducción del ancho del logo */
+    width: 250px; /* Reducción del ancho del logo */
     height: auto; 
     margin-bottom: 10px; /* Reducir el espacio debajo del logo */
 }

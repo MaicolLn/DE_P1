@@ -10,7 +10,7 @@ body {
 }
 
 #logo {
-    width: 300px; /* Ajusta el tamaño según necesites */
+    width: 250px; /* Ajusta el tamaño según necesites */
     height: auto; /* Mantiene la proporción */
     margin-bottom: 10px; /* Espacio entre el logo y el título */
 }
