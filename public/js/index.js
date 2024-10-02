@@ -45,7 +45,7 @@ function fetchData() {
             marker.setLatLng([lat, lon]);
             coordinates.push([lat, lon]);
             polyline.setLatLngs(coordinates);
-            map.setView([lat, lon]);
+
             if (!userHasZoomed) {
                 map.setView([lat, lon]);
             }
