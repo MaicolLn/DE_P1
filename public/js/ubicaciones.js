@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }).addTo(map);
 
     let selectedMarker = null; // Para almacenar el marcador seleccionado por el usuario
+    let selectedCircle = null; // Para almacenar el círculo seleccionado por el usuario
 
     // Obtener coordenadas del clic en el mapa
     map.on('click', function(e) {
@@ -24,10 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
             map.removeLayer(selectedMarker);
         }
 
+        // Si ya hay un círculo seleccionado, lo eliminamos
+        if (selectedCircle) {
+            map.removeLayer(selectedCircle);
+        }
+
         // Agregar un nuevo marcador en la ubicación seleccionada con coordenadas redondeadas
         selectedMarker = L.marker([lat, lng]).addTo(map)
             .bindPopup(`Ubicación seleccionada: [${lat}, ${lng}]`)
             .openPopup();
+
+        // Agregar un círculo alrededor del marcador con un radio de 200 metros
+        const radius = 50; // //CAMBIAR EN UBICACIONES.JS Y EN SERVER.JS
+        selectedCircle = L.circle([lat, lng], {
+            color: 'blue',
+            fillColor: '#3f93ff',
+            fillOpacity: 0.2,
+            radius: radius // El radio del círculo es 200 metros
+        }).addTo(map);
     });
 
     // Manejar el envío del formulario

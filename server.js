@@ -107,7 +107,7 @@ app.get('/name', (req, res) => {
 });
 
 // Iniciar el servidor HTTP
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
 });
@@ -124,7 +124,7 @@ app.get('/api/consulta-ubicacion', (req, res) => {
     }
 
     // Radio en metros (200 metros en este caso)
-    const radius = 100; // 200 metros
+    const radius = 50; // 200 metros
 
     // Fórmula de Haversine para calcular la distancia entre dos puntos
     const sql = `
