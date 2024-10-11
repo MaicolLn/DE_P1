@@ -23,7 +23,7 @@ body {
 
 .row {
     display: flex; 
-    width: 100%; 
+    width: 70%; 
     margin-top: 10px; 
 }
 
@@ -36,7 +36,7 @@ body {
 }
 
 #logo {
-    width: 300px; 
+    width: 250px; 
     height: auto; 
     margin-bottom: 10px; 
 }
@@ -77,20 +77,9 @@ button {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
     text-align: center; 
     width: auto;
-}
-#historicalForm p {
-    margin: 5px;
-    padding: 10px 15px;
-    background-color: #b2f4fa; /* Fondo azul */
-    border-radius: 20px; /* Bordes redondeados */
-    color: black; /* Texto negro */
-    font-family: 'Arial', sans-serif;
-    font-size: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombras suaves */
-    text-align: center; /* Alinear texto al centro */
-    width: auto;
     font-weight: bold;
 }
+
 
 
 button:hover {
