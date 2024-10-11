@@ -5,30 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta por Ubicación</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="/css/ubicaciones.css" /> <!-- Enlace al archivo CSS -->
+    <link rel="stylesheet" href="/css/ubicaciones.css" />
 </head>
 <body>
+    <div id="container">
+        <!-- Formulario de consulta -->
+        <form id="locationForm">
+            <img src="logo.png" alt="Logo" id="logo">
 
-    <form id="locationForm">
-            <img src="logo.png" alt="Logo" id="logo"> <!-- Cambia esta ruta por la de tu logo -->
             <h1 id="header">Consulta por Ubicación</h1>
-            
+
+            <!-- Campo para seleccionar la fecha inicial -->
             <div class="row">
                 <div class="column">
-                    <p><strong>Latitud:</strong></p>
-                    <input type="number" id="lat" step="any" required>
+                    <p><strong>Fecha Inicial:</strong></p>
+                    <input type="datetime-local" id="startDate" required>
                 </div>
             </div>
-            
-            <div class="row">
-                <div class="column">
-                    <p><strong>Longitud:</strong></p>
-                    <input type="number" id="lon" step="any" required>
-                </div>   
-            </div>
-            
+
             <button type="submit">Consultar</button>
-            
+
             <!-- Tabla de resultados -->
             <table id="resultTable" border="1" style="margin-top: 20px;">
                 <thead>
@@ -39,7 +35,6 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            
         </form>
 
         <!-- Mapa -->
@@ -47,6 +42,25 @@
 
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="/js/ubicaciones.js"></script> <!-- Enlace al archivo JS -->
+    <script src="/js/ubicaciones.js"></script>
+
+    <!-- Validación de fecha no mayor a la actual -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startDateInput = document.getElementById('startDate');
+
+            // Definir la fecha y hora actuales como el valor máximo permitido
+            const now = new Date().toISOString().slice(0, 16); // Recortar a "YYYY-MM-DDTHH:MM"
+            startDateInput.max = now;
+
+            // Evitar que se seleccione una fecha mayor a la actual
+            startDateInput.addEventListener('input', function () {
+                if (this.value > now) {
+                    alert("La fecha seleccionada no puede ser mayor a la fecha y hora actuales.");
+                    this.value = now; // Restablecer al valor máximo permitido
+                }
+            });
+        });
+    </script>
 </body>
 </html>
