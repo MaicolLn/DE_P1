@@ -117,16 +117,17 @@ app.listen(PORT, () => {
 /////////
 
 app.get('/api/consulta-ubicacion', (req, res) => {
-    const { lat, lon } = req.query;
-
-    if (!lat || !lon) {
-        return res.status(400).json({ error: 'Latitud y longitud son requeridas' });
+    const { lat, lon, startDate } = req.query;
+    
+    if (!lat || !lon || !startDate) {
+        return res.status(400).json({ error: 'Latitud, longitud y fecha inicial son requeridas' });
     }
 
-    // Radio en metros (200 metros en este caso)
-    const radius = 100; // 200 metros
+    // Extrae la fecha y la hora de startDate
+    const [startDateOnly, startHour] = startDate.split('T');  // Divide la fecha y la hora
 
-    // Fórmula de Haversine para calcular la distancia entre dos puntos
+    const radius = 70; // Radio en metros
+
     const sql = `
         SELECT Fecha, Hora, Latitud, Longitud,
         (6371000 * acos(
@@ -134,15 +135,17 @@ app.get('/api/consulta-ubicacion', (req, res) => {
             sin(radians(?)) * sin(radians(Latitud))
         )) AS distancia
         FROM coordenadas
+        WHERE (Fecha > ? OR (Fecha = ? AND Hora >= ?))  -- Usar la fecha inicial para limitar los resultados
         HAVING distancia <= ?
         ORDER BY Fecha, Hora;
     `;
 
-    connection.query(sql, [lat, lon, lat, radius], (err, results) => {
+    connection.query(sql, [lat, lon, lat, startDateOnly, startDateOnly, startHour, radius], (err, results) => {
         if (err) throw err;
         res.json(results); // Envía los datos como JSON
     });
 });
+
 
 // Ruta para servir el archivo HTML de historial
 app.get('/ubicaciones', (req, res) => {
