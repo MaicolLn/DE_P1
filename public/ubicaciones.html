@@ -13,6 +13,12 @@
             <img src="logo.png" alt="Logo" id="logo">
             <h1 id="header">Consulta por Ubicación</h1>
 
+            <!-- Comentario para el usuario -->
+            <div id="map-instructions">
+                <p><strong>Por favor, seleccione una fecha inicial y un lugar en el mapa para realizar la consulta.</strong></p>
+            </div>
+                        
+
             <!-- Campo para seleccionar la fecha inicial -->
             <div class="row">
                 <div class="column">
@@ -21,7 +27,13 @@
                 </div>
             </div>
 
-            <button type="submit">Consultar</button>
+            <div class="button-container">
+                <button type="submit">Consultar</button>
+                <button onclick="window.history.back()">Retroceder</button>
+            </div>
+                    
+
+
 
             <!-- Tabla de resultados -->
             <table id="resultTable" border="1" style="margin-top: 20px;">
