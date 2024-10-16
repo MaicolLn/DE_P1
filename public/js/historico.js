@@ -15,6 +15,56 @@ dateInputs.forEach(input => {
         e.preventDefault();
     });
 });
+// Función para obtener la fecha actual en formato 'YYYY-MM-DDTHH:MM'
+function getCurrentDateTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Añadir un 0 delante si es necesario
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+// Aplicar la fecha máxima a los campos de tipo datetime-local
+document.addEventListener('DOMContentLoaded', function() {
+    const currentDateTime = getCurrentDateTime(); // Obtener la fecha y hora actuales
+    document.getElementById('startDate').max = currentDateTime;
+    document.getElementById('endDate').max = currentDateTime;
+});
+function clearPreviousResults() {
+    // Limpiar la polilínea
+    if (polyline) {
+        map.removeLayer(polyline);
+    }
+    
+    // Limpiar marcadores
+    if (startMarker) {
+        map.removeLayer(startMarker);
+    }
+    if (endMarker) {
+        map.removeLayer(endMarker);
+    }
+    if (positionMarker) {
+        map.removeLayer(positionMarker);
+    }
+
+    // Resetear el slider y ocultarlo
+    const slider = document.getElementById('slider');
+    slider.value = 0;
+    slider.style.display = 'none';
+
+    // Limpiar los contenedores de latitud, longitud y timestamp
+    document.getElementById('slider-lat').textContent = '--';
+    document.getElementById('slider-lon').textContent = '--';
+    document.getElementById('slider-tim').textContent = '--';
+
+    // Ocultar los contenedores
+    document.getElementById('lat-container').style.display = 'none';
+    document.getElementById('lon-container').style.display = 'none';
+    document.getElementById('tim-container').style.display = 'none';
+}
+
 
 // Mostrar la sección de fecha y hora final al seleccionar una fecha inicial
 document.getElementById('startDate').addEventListener('change', function() {
@@ -70,9 +120,11 @@ document.getElementById('endDate').addEventListener('change', function() {
     startDateInput.max = this.value;
 });
 
-// Enviar la consulta al servidor para obtener el historial de ubicaciones
 document.getElementById('historicalForm').addEventListener('submit', function(e) {
     e.preventDefault();
+
+    // Limpiar los resultados anteriores antes de la nueva búsqueda
+    clearPreviousResults();
     
     // Obtener los valores de fecha y hora de los campos de tipo datetime-local
     const startDateTime = document.getElementById('startDate').value; // Formato "YYYY-MM-DDTHH:MM"
@@ -96,18 +148,12 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
     fetch(`/api/historico?start=${startDateTimeISO}&end=${endDateTimeISO}`)
         .then(response => response.json())
         .then(data => {
-            const coordinates = data.map(point => [point.Latitud, point.Longitud]);
+            if (data.length === 0) {
+                alert('No se encontraron resultados para esta búsqueda.');
+                return; // Si no hay resultados, detener la ejecución
+            }
 
-            // Limpiar el mapa de polilíneas y marcadores antiguos
-            if (polyline) {
-                map.removeLayer(polyline);
-            }
-            if (startMarker) {
-                map.removeLayer(startMarker);
-            }
-            if (endMarker) {
-                map.removeLayer(endMarker);
-            }
+            const coordinates = data.map(point => [point.Latitud, point.Longitud]);
 
             // Dibujar la nueva polilínea
             polyline = L.polyline(coordinates, { color: 'blue' }).addTo(map);
@@ -122,20 +168,17 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
             slider.max = coordinates.length - 1;
             slider.style.display = 'block';
 
-
             const sliderlat = document.getElementById('slider-lat');
             const sliderlon = document.getElementById('slider-lon');
             const slidertim = document.getElementById('slider-tim');
+
             // Mover el marcador de posición en el mapa según el slider
-            if (positionMarker) {
-                map.removeLayer(positionMarker);
-            }
             positionMarker = L.marker(coordinates[0], { icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/808080/marker.png', iconSize: [25, 41] }) }).addTo(map);
             const latContainer = document.getElementById('lat-container');
             const lonContainer = document.getElementById('lon-container');
             const timContainer = document.getElementById('tim-container');
+
             slider.addEventListener('input', function() {
-                
                 const index = this.value;
                 const latlng = coordinates[index];
                 positionMarker.setLatLng(latlng);
@@ -143,7 +186,7 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
                 latContainer.style.display = 'block';
                 lonContainer.style.display = 'block';
                 timContainer.style.display = 'block';
-                // Cortar la fecha desde la "T"
+                
                 let fechaOriginal = data[index].Fecha;
                 let fecha = fechaOriginal.split('T')[0];  // Obtiene solo la parte de la fecha antes de la "T"
             
@@ -151,7 +194,6 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
                 sliderlat.textContent = `${latlng[0]}`;
                 sliderlon.textContent = `${latlng[1]}`;
                 slidertim.textContent = `${timestamp}`;
-
             });
         })
         .catch(err => console.error('Error fetching data:', err));
