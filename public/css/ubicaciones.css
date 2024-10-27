@@ -205,3 +205,14 @@ input[type="number"] {
         font-size: 14px;
     }
 }
+#map-instructions {
+    background-color: black; /* Fondo negro */
+    color: white; /* Letras blancas */
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Arial', sans-serif;
+    font-style: italic; /* Letras inclinadas */
+    font-size: 16px;
+    text-align: center; /* Centrar el texto */
+    margin-top: 20px; /* Espacio extra para separarlo de otros elementos */
+}
