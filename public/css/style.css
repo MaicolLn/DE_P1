@@ -57,7 +57,7 @@ body {
 
 /* Estilo para centrar el botón */
 button {
-    background-color: #b2f4fa;
+    background-color: #0056b3;
     color: black;
     border: none;
     padding: 10px 20px;
@@ -71,7 +71,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #0000b3;
 }
 
 /* Media queries para hacer el diseño responsive */
