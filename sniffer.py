@@ -49,12 +49,14 @@ def process_packet(packet):
             
             cursor = db_connection.cursor()
 
+
             # Actualización de la consulta SQL para incluir el campo id_user
             sql = """
                 INSERT INTO coordenadas (Latitud, Longitud, Fecha, Hora, rpm, id_user, ip_address) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
             cursor.execute(sql, (latitud, longitud, fecha, hora, rpm, id_user, ip_address))
+
             db_connection.commit()
             print("Datos insertados en la base de datos")
 
