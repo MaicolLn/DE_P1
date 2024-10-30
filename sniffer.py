@@ -45,7 +45,7 @@ def process_packet(packet):
             ensure_connection_open(db_connection)
             
             cursor = db_connection.cursor()
-
+            
             sql = "INSERT INTO coordenadas (Latitud, Longitud, Fecha, Hora, ip_address) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(sql, (latitud, longitud, fecha, hora, ip_address))
             db_connection.commit()
