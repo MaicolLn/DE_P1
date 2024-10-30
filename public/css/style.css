@@ -1,61 +1,107 @@
 body {
-    background-color: black; /* Cambiar el fondo de la página a negro */
-    color: white; /* Cambiar el color del texto a blanco para mayor contraste */
-    display: flex; /* Usar flexbox para organización */
+    background-color: black;
+    color: white;
+    display: flex;
+}
+
+#sidebar {
+    width: 30%;
+    height: 100vh;
+    background-color: black;
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+    transform: translateX(0);
+    z-index: 1000;
+}
+
+#sidebar.closed {
+    transform: translateX(-100%);
 }
 
 #map {
-    height: 100vh; /* Hacer que el mapa ocupe toda la altura de la ventana */
-    width: 97%; /* Ancho del mapa en pantallas grandes */
+    height: 100vh;
+    width: 100%;
+    transition: width 0.3s ease;
+}
+
+#map.fullscreen {
+    width: 100vw;
 }
 
 #logo {
-    width: 250px; /* Ajusta el tamaño según necesites */
-    height: auto; /* Mantiene la proporción */
-    margin-bottom: 10px; /* Espacio entre el logo y el título */
+    width: 250px;
+    height: auto;
+    margin-bottom: 10px;
 }
 
-/* Contenedor de los datos y botón */
-#data {
-    width: 30%; /* Ancho del contenedor de datos en pantallas grandes */
-    padding: 10px; /* Espacio alrededor del contenedor */
-    display: flex;
-    flex-direction: column; /* Organizar en columna */
-    align-items: center; /* Alinear al centro */
-}
-
-/* Subdivisión de las columnas para latitud/longitud y fecha/hora */
 .row {
-    display: flex; /* Organizar columnas en fila */
-    width: 100%; /* Hacer que la fila ocupe todo el ancho */
-    margin-top: 10px; /* Espacio entre filas */
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
 }
 
 .column {
     font-family: 'Arial', sans-serif;
-    margin-right: 5px; /* Espacio entre columnas */
-    flex: 1; /* Para que ambas columnas tengan el mismo ancho */
-    text-align: center; /* Alinear texto al centro */
+    margin-right: 5px;
+    flex: 1;
+    text-align: center;
 }
 
-#data p {
+#sidebar p {
     margin: 5px;
     padding: 10px 15px;
-    background-color: #b2f4fa; /* Fondo azul */
-    border-radius: 20px; /* Bordes redondeados */
-    color: black; /* Texto negro */
+    background-color: #b2f4fa;
+    border-radius: 20px;
+    color: black;
     font-family: 'Arial', sans-serif;
     font-size: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombras suaves */
-    text-align: center; /* Alinear texto al centro */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
     width: auto;
 }
 
-#data p strong {
+#sidebar p strong {
     font-weight: bold;
 }
 
-/* Estilo para centrar el botón */
+/* Botón de control del menú como flecha en círculo */
+#toggle-button {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #b2f4fa;
+    color: black;
+    border: none;
+    width: 40px; /* Tamaño del círculo */
+    height: 40px;
+    border-radius: 50%; /* Hacerlo circular */
+    font-size: 24px; /* Tamaño de la flecha */
+    cursor: pointer;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#toggle-button.open {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+#toggle-button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
 button {
     background-color: #b2f4fa;
     color: black;
@@ -67,7 +113,7 @@ button {
     border-radius: 2px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 20px; /* Espacio arriba del botón */
+    margin-top: 20px;
 }
 
 button:hover {
@@ -77,34 +123,41 @@ button:hover {
 /* Media queries para hacer el diseño responsive */
 @media (max-width: 1024px) {
     body {
-        flex-direction: column; /* Cambiar a columna en pantallas más pequeñas */
+        flex-direction: column;
     }
 
     #map {
-        width: 100%; /* Hacer que el mapa ocupe todo el ancho */
-        height: 50vh; /* Ajustar altura del mapa */
+        width: 100%;
+        height: 50vh;
     }
 
-    #data {
-        width: 90%; /* Ajustar el ancho del contenedor de datos */
+    #sidebar {
+        width: 90%;
     }
 }
 
 @media (max-width: 768px) {
-    #data {
-        width: 95%; /* Ajustar aún más el ancho en dispositivos más pequeños */
+    #sidebar {
+        width: 95%;
     }
 
     #logo {
-        width: 80%; /* Hacer el logo más pequeño */
+        width: 80%;
     }
 
-    #data p {
-        font-size: 10px; /* Ajustar el tamaño de la fuente para que sea legible */
+    #sidebar p {
+        font-size: 10px;
     }
 
     button {
-        font-size: 10px; /* Ajustar el tamaño de fuente del botón */
-        padding: 8px 16px; /* Ajustar padding del botón */
+        font-size: 10px;
+        padding: 8px 16px;
     }
 }
+
+.leaflet-control-zoom-hidden .leaflet-control-zoom {
+    display: none;
+}
+
+
+

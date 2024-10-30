@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/style.css" /> <!-- Enlace al archivo CSS externo -->
 </head>
 <body>
-    <div id="data">
+    <div id="sidebar" class="closed">
         <img src="logo.png" alt="Logo" id="logo"> <!-- Cambia esta ruta por la de tu logo -->
         <div class="row">
             <div class="column">
@@ -22,16 +22,21 @@
             </div>
         </div>
         <p><strong>Dirección IP:</strong> <span id="ip">--</span></p>
-        <p><strong>RPM:</strong> <span id="rpm">--</span></p> <!-- Nuevo campo para rpm -->
+        <p><strong>RPM:</strong> <span id="rpm">--</span></p>
         <button onclick="window.location.href='/historico';">Consulta por Tiempo</button>
     </div>
 
-    <div id="map"></div>
+    <!-- Botón de flecha para abrir/cerrar el menú -->
+    <button id="toggle-button" class="arrow">&#9658;</button>
+
+    <div id="map" class="fullscreen"></div>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="/js/index.js"></script> <!-- Enlace al archivo JS externo -->
 </body>
 </html>
+
+
 
 

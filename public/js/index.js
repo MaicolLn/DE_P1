@@ -11,8 +11,16 @@ let userHasZoomed = false;
 map.on('zoomstart', () => { userHasZoomed = true; });
 map.on('movestart', () => { userHasZoomed = true; });
 
-// Diccionario para almacenar las polilíneas, las coordenadas y los tooltips de cada usuario
+// Diccionario para almacenar las polilíneas, las coordenadas y los marcadores de cada usuario
 const userPolylines = {};
+
+// Cargar la imagen del taxi como icono
+const taxiIcon = L.icon({
+    iconUrl: 'taxi2.png', // Ruta de la imagen del taxi
+    iconSize: [45, 45], // Ajusta el tamaño del icono
+    iconAnchor: [20, 20], // Punto de anclaje del icono (centrado)
+    popupAnchor: [0, -16] // Punto donde el popup se ancla al icono
+});
 
 // Función para obtener y mostrar el nombre del usuario en el título
 function fetchName() {
@@ -46,25 +54,38 @@ function fetchData() {
 
             // Crear o actualizar la polilínea para el usuario específico
             if (!userPolylines[id_user]) {
-                // Si la polilínea para el usuario no existe, se crea una nueva con tooltip inicial
                 userPolylines[id_user] = {
                     coordinates: [],
                     polyline: L.polyline([], { color: id_user === "a" ? 'blue' : 'green' }).addTo(map),
-                    lastMarker: L.marker([lat, lon]).addTo(map)
+                    lastMarker: L.marker([lat, lon], { icon: taxiIcon }).addTo(map)
                 };
-                // Agregar tooltip inicial
-                userPolylines[id_user].lastMarker.bindTooltip(`Usuario: ${id_user} - RPM: ${rpm}`, { permanent: true }).openTooltip();
+                
+                const markerElement = userPolylines[id_user].lastMarker._icon;
+                markerElement.classList.add('bounce');
+                
+                setTimeout(() => {
+                    markerElement.classList.remove('bounce');
+                }, 3000);
+
+                let infoVisible = false;
+                userPolylines[id_user].lastMarker.on('click', function () {
+                    if (infoVisible) {
+                        userPolylines[id_user].lastMarker.unbindPopup();
+                        infoVisible = false;
+                    } else {
+                        userPolylines[id_user].lastMarker.bindPopup(
+                            `Usuario: ${id_user} - RPM: ${rpm}<br>Latitud: ${lat}<br>Longitud: ${lon}<br>Fecha: ${fechaSolo}<br>Hora: ${data.Hora}`
+                        ).openPopup();
+                        infoVisible = true;
+                    }
+                });
             } else {
-                // Si la polilínea ya existe, solo actualiza el tooltip y la posición del último marcador
-                userPolylines[id_user].lastMarker.setLatLng([lat, lon])
-                    .setTooltipContent(`Usuario: ${id_user} - RPM: ${rpm}`).openTooltip();
+                userPolylines[id_user].lastMarker.setLatLng([lat, lon]);
             }
 
-            // Añadir las nuevas coordenadas al historial del usuario
             userPolylines[id_user].coordinates.push([lat, lon]);
             userPolylines[id_user].polyline.setLatLngs(userPolylines[id_user].coordinates);
 
-            // Centrar el mapa en la nueva posición si el usuario no ha hecho zoom manual
             if (!userHasZoomed) {
                 map.setView([lat, lon], 17);
             }
@@ -74,6 +95,34 @@ function fetchData() {
         });
 }
 
-// Llamada a fetchData cada segundo para actualizar la posición en tiempo real
 setInterval(fetchData, 1000);
 fetchData();
+
+// Control del menú desplegable
+document.getElementById('toggle-button').addEventListener('click', function() {
+    const sidebar = document.getElementById('sidebar');
+    const mapContainer = document.getElementById('map');
+    const toggleButton = document.getElementById('toggle-button');
+    
+    if (sidebar.classList.contains('closed')) {
+        sidebar.classList.remove('closed');
+        mapContainer.classList.remove('fullscreen');
+        toggleButton.innerHTML = '&#9668;'; // Cambiar flecha a la izquierda
+        mapContainer.classList.add('leaflet-control-zoom-hidden'); // Ocultar controles de zoom
+    } else {
+        sidebar.classList.add('closed');
+        mapContainer.classList.add('fullscreen');
+        toggleButton.innerHTML = '&#9658;'; // Cambiar flecha a la derecha
+        mapContainer.classList.remove('leaflet-control-zoom-hidden'); // Mostrar controles de zoom
+    }
+
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 300);
+});
+
+
+
+
+
+
