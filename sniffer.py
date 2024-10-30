@@ -32,6 +32,7 @@ db_connection = get_db_connection()
 def process_packet(packet):
     if packet.haslayer(UDP) and packet[UDP].dport == 10000:
         payload = packet[UDP].payload.load.decode('utf-8')
+        print("Payload recibido:", payload)
 
         try:
             data = json.loads(payload)
@@ -39,15 +40,23 @@ def process_packet(packet):
             longitud = data.get('longitud')
             fecha = data.get('fecha')
             hora = data.get('hora')
+            rpm = data.get('rpm', 0)  # Obtén el valor de rpm, o 0 si no está presente
+            id_user = data.get('id_user', 'desconocido').lower()  # Obtén id_user en minúsculas
             ip_address = packet[IP].src
 
             # Verificar y asegurar que la conexión esté abierta
             ensure_connection_open(db_connection)
             
             cursor = db_connection.cursor()
-            
-            sql = "INSERT INTO coordenadas (Latitud, Longitud, Fecha, Hora, ip_address) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(sql, (latitud, longitud, fecha, hora, ip_address))
+
+
+            # Actualización de la consulta SQL para incluir el campo id_user
+            sql = """
+                INSERT INTO coordenadas (Latitud, Longitud, Fecha, Hora, rpm, id_user, ip_address) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, (latitud, longitud, fecha, hora, rpm, id_user, ip_address))
+
             db_connection.commit()
             print("Datos insertados en la base de datos")
 

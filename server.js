@@ -35,7 +35,9 @@ app.get('/data', (req, res) => {
             Longitud,
             Fecha,
             Hora,
-            ip_address
+            ip_address,
+            rpm,
+            id_user
         FROM coordenadas
         ORDER BY id DESC
         LIMIT 1
@@ -44,15 +46,14 @@ app.get('/data', (req, res) => {
     connection.query(sql, (err, results) => {
         if (err) throw err;
 
-        console.log(results); // Agrega este console.log para verificar los resultados de la base de datos
+        console.log(results); // Verifica los resultados de la base de datos
 
         const data = results[0];
-        data.Fecha = new Date(data.Fecha).toLocaleDateString();  
+        data.Fecha = new Date(data.Fecha).toLocaleDateString();
 
-        res.json(data);
+        res.json(data); // Asegúrate de que 'data' contenga el valor de rpm
     });
 });
-
 
 
 // Ruta para servir el archivo HTML de historial
@@ -107,7 +108,7 @@ app.get('/name', (req, res) => {
 });
 
 // Iniciar el servidor HTTP
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
 });
