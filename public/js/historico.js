@@ -6,7 +6,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let polylines = []; // Array para almacenar todas las polilíneas actuales
 let markers = {}; // Almacenar el marcador de cada usuario
 let sliderData = {}; // Almacenar los datos de cada usuario para el slider
-let selectedUser = null; // Usuario seleccionado para el slider
+let selectedUser = null; // Usuario actualmente seleccionado para el slider
 
 // Prevenir que los usuarios escriban directamente en los campos de fecha
 const dateInputs = document.querySelectorAll('input[type="datetime-local"]');
@@ -101,13 +101,35 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
                 markers[item.id_user] = marker;
             });
 
-            // Mostrar selección de usuario para el slider
-            document.getElementById('slider-user-selection').style.display = 'block';
+            // Mostrar solo las opciones de usuario seleccionadas para el slider
+            const sliderUserSelection = document.getElementById('slider-user-selection');
+            sliderUserSelection.innerHTML = ''; // Limpiar las opciones de selección anteriores
+
+            // Crear botón dinámico para el usuario "a" si está en la consulta
+            if (userIds.includes('a')) {
+                const buttonA = document.createElement('button');
+                buttonA.type = 'button';
+                buttonA.id = 'user-a';
+                buttonA.textContent = 'Usuario A';
+                buttonA.addEventListener('click', () => updateSliderForUser('a'));
+                sliderUserSelection.appendChild(buttonA);
+            }
+
+            // Crear botón dinámico para el usuario "b" si está en la consulta
+            if (userIds.includes('b')) {
+                const buttonB = document.createElement('button');
+                buttonB.type = 'button';
+                buttonB.id = 'user-b';
+                buttonB.textContent = 'Usuario B';
+                buttonB.addEventListener('click', () => updateSliderForUser('b'));
+                sliderUserSelection.appendChild(buttonB);
+            }
+
+            sliderUserSelection.style.display = 'block'; // Mostrar la selección de usuario
         })
         .catch(err => console.error('Error fetching data:', err));
 });
 
-// Función para actualizar el slider y el marcador según el usuario seleccionado
 function updateSliderForUser(userId) {
     selectedUser = userId;
     const userData = sliderData[userId];
@@ -115,36 +137,50 @@ function updateSliderForUser(userId) {
 
     // Configurar el slider según los datos del usuario
     slider.max = userData.length - 1;
+    slider.value = 0; // Reiniciar el slider a la posición inicial
     slider.style.display = 'block';
 
-    // Actualizar la posición del marcador y mostrar el popup al mover el slider
-    slider.addEventListener('input', function() {
-        const index = this.value;
+    // Eliminar todos los eventos de cambio anteriores en el slider
+    slider.replaceWith(slider.cloneNode(true));
+    const newSlider = document.getElementById('slider');
+
+    // Establecer el marcador en la posición inicial de la polilínea del usuario seleccionado
+    const initialPoint = userData[0];
+    const marker = markers[userId];
+    const initialLatLng = [initialPoint.Latitud, initialPoint.Longitud];
+    
+    marker.setLatLng(initialLatLng);
+    map.setView(initialLatLng);
+
+    // Actualizar el popup con la información del primer punto
+    const initialPopupContent = `
+        <b>Usuario:</b> ${userId}<br>
+        <b>Latitud:</b> ${initialPoint.Latitud}<br>
+        <b>Longitud:</b> ${initialPoint.Longitud}<br>
+        <b>Fecha:</b> ${initialPoint.Fecha.split('T')[0]}<br>
+        <b>Hora:</b> ${initialPoint.Hora}<br>
+        <b>RPM:</b> ${initialPoint.rpm || 'No disponible'}
+    `;
+    marker.bindPopup(initialPopupContent).openPopup();
+
+    // Agregar el evento para mover el marcador solo para el usuario seleccionado
+    newSlider.addEventListener('input', function moveMarker() {
+        const index = newSlider.value;
         const dataPoint = userData[index];
-    
-        const marker = markers[userId];
+
         const latlng = [dataPoint.Latitud, dataPoint.Longitud];
-    
         marker.setLatLng(latlng);
         map.setView(latlng);
-    
-        // Extraer solo la fecha (YYYY-MM-DD) de dataPoint.Fecha
-        const fechaSolo = dataPoint.Fecha.split('T')[0];
-    
-        // Actualizar el popup con la información sobre la polilínea
+
+        // Actualizar el popup con la información del punto actual
         const popupContent = `
             <b>Usuario:</b> ${userId}<br>
             <b>Latitud:</b> ${dataPoint.Latitud}<br>
             <b>Longitud:</b> ${dataPoint.Longitud}<br>
-            <b>Fecha:</b> ${fechaSolo}<br>
+            <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br>
             <b>Hora:</b> ${dataPoint.Hora}<br>
-            <b>RPM:</b> ${dataPoint.rpm|| 'No disponible'}
+            <b>RPM:</b> ${dataPoint.rpm || 'No disponible'}
         `;
         marker.bindPopup(popupContent).openPopup();
     });
-    
 }
-
-// Eventos para seleccionar el usuario en el slider
-document.getElementById('user-a').addEventListener('click', () => updateSliderForUser('a'));
-document.getElementById('user-b').addEventListener('click', () => updateSliderForUser('b'));
