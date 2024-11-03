@@ -13,6 +13,10 @@
         <img src="logo.png" alt="Logo" id="logo"> <!-- Cambia esta ruta por la de tu logo -->
         <h1 id="header"> Consulta por tiempo</h1>
         
+        <!-- Botón de flecha para volver -->
+        <button type="button" onclick="window.history.back()" id="backButton">&#8592;</button> <!-- Código de flecha hacia la izquierda -->
+    
+        <!-- Resto del formulario -->
         <div class="row">
             <div class="column">
                 <p><strong>Fecha Inicial:</strong></p>
@@ -34,24 +38,21 @@
                 <label><input type="checkbox" name="userIds" value="b"> Usuario B</label>
             </div>
         </div>        
-        
+            
         <div class="button-container">
             <button type="submit">Consultar</button>
-            <button onclick="window.history.back()">Volver</button>
         </div>        
-
+    
         <!-- Selección de usuario para el slider después de realizar la consulta -->
         <div id="slider-user-selection" style="display: none;">
             <p><strong>Seleccionar Usuario para el Slider:</strong></p>
-            <!-- Los botones de usuario se agregarán dinámicamente aquí desde historico.js -->
         </div>
-
-        <!-- Slider para moverse a lo largo de la polilínea seleccionada -->
+    
         <input type="range" id="slider" min="0" value="0" step="1" style="display:none;">
         
-        <!-- Información de ubicación y datos adicionales en el marcador -->
         <button type="button" onclick="window.location.href='/ubicaciones';">Consulta por Ubicación</button>
     </form>
+    
 
     <div id="map"></div>
 
