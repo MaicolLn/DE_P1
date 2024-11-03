@@ -85,6 +85,14 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+/* Estilo para las etiquetas de los checkboxes */
+.row label {
+    color: white; /* Cambia el color del texto a blanco */
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    margin-right: 10px; /* Espacio entre los checkboxes */
+}
+
 
 /* Media Queries para pantallas pequeñas (dispositivos móviles) */
 @media (max-width: 768px) {
