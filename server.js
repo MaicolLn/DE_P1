@@ -64,29 +64,39 @@ app.get('/historico', (req, res) => {
 
 
 app.get('/api/historico', (req, res) => {
-    const { start, end } = req.query;
+    const { start, end, userIds } = req.query;
 
-    // Agrega este console.log para verificar los valores recibidos
-    console.log('Received start:', start, 'end:', end);
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const userIdsArray = userIds.split(','); // Convertir a un array
 
     const sql = `
-    SELECT Latitud, Longitud, Fecha, Hora
-    FROM coordenadas
-    WHERE (Fecha > ? OR (Fecha = ? AND Hora >= ?))
-    AND (Fecha < ? OR (Fecha = ? AND Hora <= ?))
-    ORDER BY Fecha, Hora;
+        SELECT id_user, Latitud, Longitud, Fecha, Hora, rpm
+        FROM coordenadas
+        WHERE (Fecha > ? OR (Fecha = ? AND Hora >= ?))
+        AND (Fecha < ? OR (Fecha = ? AND Hora <= ?))
+        AND id_user IN (?)
+        ORDER BY id_user, Fecha, Hora;
     `;
 
-    // Extrae las horas y minutos de las fechas
-    const startHour = start.split('T')[1];
-    const endHour = end.split('T')[1];
-
-    // Agrega este console.log para ver la consulta y los parámetros
-    console.log('Executing SQL:', sql, [start.split('T')[0], start.split('T')[0], startHour, end.split('T')[0], end.split('T')[0], endHour ]);
-
-    connection.query(sql, [start.split('T')[0], start.split('T')[0], startHour, end.split('T')[0], end.split('T')[0], endHour ], (err, results) => {
+    connection.query(sql, [
+        startDate.toISOString().split('T')[0], 
+        startDate.toISOString().split('T')[0], 
+        startDate.toISOString().split('T')[1].slice(0, 5), 
+        endDate.toISOString().split('T')[0], 
+        endDate.toISOString().split('T')[0], 
+        endDate.toISOString().split('T')[1].slice(0, 5),
+        userIdsArray
+    ], (err, results) => {
         if (err) throw err;
-        res.json(results); // Envía los datos como JSON
+
+        // Agrupar los resultados por id_user para enviarlos de vuelta al cliente
+        const groupedData = userIdsArray.map(id => ({
+            id_user: id,
+            records: results.filter(record => record.id_user === id)
+        }));
+
+        res.json(groupedData);
     });
 });
 
