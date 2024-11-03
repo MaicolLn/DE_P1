@@ -101,8 +101,29 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
                 markers[item.id_user] = marker;
             });
 
-            // Mostrar selección de usuario para el slider
-            document.getElementById('slider-user-selection').style.display = 'block';
+            // Mostrar solo las opciones de usuario seleccionadas para el slider
+            const sliderUserSelection = document.getElementById('slider-user-selection');
+            sliderUserSelection.innerHTML = ''; // Limpiar las opciones de selección anteriores
+
+            if (userIds.includes('a')) {
+                const buttonA = document.createElement('button');
+                buttonA.type = 'button';
+                buttonA.id = 'user-a';
+                buttonA.textContent = 'Usuario A';
+                buttonA.addEventListener('click', () => updateSliderForUser('a'));
+                sliderUserSelection.appendChild(buttonA);
+            }
+
+            if (userIds.includes('b')) {
+                const buttonB = document.createElement('button');
+                buttonB.type = 'button';
+                buttonB.id = 'user-b';
+                buttonB.textContent = 'Usuario B';
+                buttonB.addEventListener('click', () => updateSliderForUser('b'));
+                sliderUserSelection.appendChild(buttonB);
+            }
+
+            sliderUserSelection.style.display = 'block'; // Mostrar la selección de usuario
         })
         .catch(err => console.error('Error fetching data:', err));
 });
@@ -121,30 +142,22 @@ function updateSliderForUser(userId) {
     slider.addEventListener('input', function() {
         const index = this.value;
         const dataPoint = userData[index];
-    
+        
         const marker = markers[userId];
         const latlng = [dataPoint.Latitud, dataPoint.Longitud];
-    
+        
         marker.setLatLng(latlng);
         map.setView(latlng);
-    
-        // Extraer solo la fecha (YYYY-MM-DD) de dataPoint.Fecha
-        const fechaSolo = dataPoint.Fecha.split('T')[0];
-    
+
         // Actualizar el popup con la información sobre la polilínea
         const popupContent = `
             <b>Usuario:</b> ${userId}<br>
             <b>Latitud:</b> ${dataPoint.Latitud}<br>
             <b>Longitud:</b> ${dataPoint.Longitud}<br>
-            <b>Fecha:</b> ${fechaSolo}<br>
+            <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br> <!-- Solo muestra la fecha -->
             <b>Hora:</b> ${dataPoint.Hora}<br>
-            <b>RPM:</b> ${dataPoint.rpm|| 'No disponible'}
+            <b>RPM:</b> ${dataPoint.RPM || 'No disponible'}
         `;
         marker.bindPopup(popupContent).openPopup();
     });
-    
 }
-
-// Eventos para seleccionar el usuario en el slider
-document.getElementById('user-a').addEventListener('click', () => updateSliderForUser('a'));
-document.getElementById('user-b').addEventListener('click', () => updateSliderForUser('b'));
