@@ -101,6 +101,7 @@ app.get('/api/historico', (req, res) => {
 });
 
 
+
 // Ruta para obtener todos los datos en formato JSON
 app.get('/api/ver-datos', (req, res) => {
     connection.query('SELECT * FROM coordenadas ORDER BY id DESC', (err, results) => {
