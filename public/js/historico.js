@@ -6,7 +6,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let polylines = []; // Array para almacenar todas las polilíneas actuales
 let markers = {}; // Almacenar el marcador de cada usuario
 let sliderData = {}; // Almacenar los datos de cada usuario para el slider
-let selectedUser = null; // Usuario seleccionado para el slider
+let selectedUser = null; // Usuario actualmente seleccionado para el slider
 
 // Prevenir que los usuarios escriban directamente en los campos de fecha
 const dateInputs = document.querySelectorAll('input[type="datetime-local"]');
@@ -105,6 +105,7 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
             const sliderUserSelection = document.getElementById('slider-user-selection');
             sliderUserSelection.innerHTML = ''; // Limpiar las opciones de selección anteriores
 
+            // Crear botón dinámico para el usuario "a" si está en la consulta
             if (userIds.includes('a')) {
                 const buttonA = document.createElement('button');
                 buttonA.type = 'button';
@@ -114,6 +115,7 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
                 sliderUserSelection.appendChild(buttonA);
             }
 
+            // Crear botón dinámico para el usuario "b" si está en la consulta
             if (userIds.includes('b')) {
                 const buttonB = document.createElement('button');
                 buttonB.type = 'button';
@@ -138,14 +140,20 @@ function updateSliderForUser(userId) {
     slider.max = userData.length - 1;
     slider.style.display = 'block';
 
-    // Actualizar la posición del marcador y mostrar el popup al mover el slider
-    slider.addEventListener('input', function() {
-        const index = this.value;
+    // Eliminar cualquier evento de cambio anterior en el slider
+    slider.removeEventListener('input', moveMarker);
+
+    // Agregar el nuevo evento para el usuario seleccionado
+    slider.addEventListener('input', moveMarker);
+
+    // Función para mover el marcador del usuario seleccionado
+    function moveMarker() {
+        const index = slider.value;
         const dataPoint = userData[index];
-        
+
         const marker = markers[userId];
         const latlng = [dataPoint.Latitud, dataPoint.Longitud];
-        
+
         marker.setLatLng(latlng);
         map.setView(latlng);
 
@@ -159,5 +167,5 @@ function updateSliderForUser(userId) {
             <b>RPM:</b> ${dataPoint.RPM || 'No disponible'}
         `;
         marker.bindPopup(popupContent).openPopup();
-    });
+    }
 }
