@@ -44,13 +44,19 @@ function fetchData() {
             const rpm = data.rpm;
             const id_user = data.id_user; // Obtener el id del usuario
 
-            // Actualizar los datos en el HTML
-            document.getElementById('ip').textContent = data.ip_address;
-            document.getElementById('lat').textContent = lat;
-            document.getElementById('lon').textContent = lon;
-            document.getElementById('fecha').textContent = fechaSolo;
-            document.getElementById('hora').textContent = data.Hora;
-            document.getElementById('rpm').textContent = rpm;
+            // Actualizar los datos en el HTML según el usuario
+            if (id_user === "a") {
+                document.getElementById('lat_a').textContent = lat;
+                document.getElementById('lon_a').textContent = lon;
+                document.getElementById('fecha_a').textContent = fechaSolo;
+                document.getElementById('hora_a').textContent = data.Hora;
+                document.getElementById('rpm').textContent = rpm;
+            } else if (id_user === "b") {
+                document.getElementById('lat_b').textContent = lat;
+                document.getElementById('lon_b').textContent = lon;
+                document.getElementById('fecha_b').textContent = fechaSolo;
+                document.getElementById('hora_b').textContent = data.Hora;
+            }
 
             // Crear o actualizar la polilínea para el usuario específico
             if (!userPolylines[id_user]) {
@@ -59,10 +65,10 @@ function fetchData() {
                     polyline: L.polyline([], { color: id_user === "a" ? 'blue' : 'green' }).addTo(map),
                     lastMarker: L.marker([lat, lon], { icon: taxiIcon }).addTo(map)
                 };
-                
+
                 const markerElement = userPolylines[id_user].lastMarker._icon;
                 markerElement.classList.add('bounce');
-                
+
                 setTimeout(() => {
                     markerElement.classList.remove('bounce');
                 }, 3000);
@@ -74,7 +80,7 @@ function fetchData() {
                         infoVisible = false;
                     } else {
                         userPolylines[id_user].lastMarker.bindPopup(
-                            `Usuario: ${id_user} - RPM: ${rpm}<br>Latitud: ${lat}<br>Longitud: ${lon}<br>Fecha: ${fechaSolo}<br>Hora: ${data.Hora}`
+                            `Usuario: ${id_user} - RPM: ${id_user === "a" ? rpm : 'N/A'}<br>Latitud: ${lat}<br>Longitud: ${lon}<br>Fecha: ${fechaSolo}<br>Hora: ${data.Hora}`
                         ).openPopup();
                         infoVisible = true;
                     }
@@ -94,6 +100,7 @@ function fetchData() {
             console.error('Error fetching data:', error);
         });
 }
+
 
 setInterval(fetchData, 1000);
 fetchData();
