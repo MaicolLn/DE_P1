@@ -57,7 +57,7 @@ body {
     
 }
 button {
-    background-color: #b2f4fa;
+    background-color: #0056b3;
     color: black;
     border: none;
     padding: 10px 20px;
@@ -72,7 +72,7 @@ button {
 
 /* Efecto hover para el botón */
 button:hover {
-    background-color: #0056b3;
+    background-color: #0000b3;
 }
 #resultTable thead th {
     background-color: #b2f4fa; /* Color de fondo para el encabezado */
@@ -150,7 +150,21 @@ input[type="number"] {
     text-align: left;
     font-family: 'Arial', sans-serif;
 }
+#backButton {
+    background-color: transparent; /* Sin fondo */
+    border: none; /* Sin borde */
+    color:#0056b3; /* Color del texto */
+    font-size: 24px; /* Tamaño de la flecha */
+    position: absolute; /* Posicionamiento absoluto */
+    top: 10px; /* Distancia desde la parte superior */
+    left: 10px; /* Distancia desde la izquierda */
+    cursor: pointer; /* Cambia el cursor al pasar el ratón */
+    transition: color 0.3s ease; /* Transición para el color */
+}
 
+#backButton:hover {
+    color:#0056b3; /* Cambia el color al pasar el ratón */
+}
 
 
 /* Media Queries para pantallas pequeñas (dispositivos móviles) */
