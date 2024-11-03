@@ -80,23 +80,23 @@ body {
     background-color: #b2f4fa;
     color: black;
     border: none;
-    width: 40px; /* Tamaño del círculo */
+    width: 40px;
     height: 40px;
-    border-radius: 50%; /* Hacerlo circular */
-    font-size: 24px; /* Tamaño de la flecha */
+    border-radius: 50%;
+    font-size: 24px;
     cursor: pointer;
     z-index: 1001;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, left 0.3s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-#toggle-button.open {
-    transform: translateY(-50%) rotate(180deg);
+/* Nueva posición del botón cuando la sidebar está abierta */
+#toggle-button.sidebar-open {
+    left: calc(30% - 10px); /* Ajusta el botón al centro del lado derecho de la sidebar */
 }
-
 #toggle-button:hover {
     background-color: #0056b3;
     color: white;
