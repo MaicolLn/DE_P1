@@ -130,7 +130,6 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
         .catch(err => console.error('Error fetching data:', err));
 });
 
-// Función para actualizar el slider y el marcador según el usuario seleccionado
 function updateSliderForUser(userId) {
     selectedUser = userId;
     const userData = sliderData[userId];
@@ -138,34 +137,50 @@ function updateSliderForUser(userId) {
 
     // Configurar el slider según los datos del usuario
     slider.max = userData.length - 1;
+    slider.value = 0; // Reiniciar el slider a la posición inicial
     slider.style.display = 'block';
 
-    // Eliminar cualquier evento de cambio anterior en el slider
-    slider.removeEventListener('input', moveMarker);
+    // Eliminar todos los eventos de cambio anteriores en el slider
+    slider.replaceWith(slider.cloneNode(true));
+    const newSlider = document.getElementById('slider');
 
-    // Agregar el nuevo evento para el usuario seleccionado
-    slider.addEventListener('input', moveMarker);
+    // Establecer el marcador en la posición inicial de la polilínea del usuario seleccionado
+    const initialPoint = userData[0];
+    const marker = markers[userId];
+    const initialLatLng = [initialPoint.Latitud, initialPoint.Longitud];
+    
+    marker.setLatLng(initialLatLng);
+    map.setView(initialLatLng);
 
-    // Función para mover el marcador del usuario seleccionado
-    function moveMarker() {
-        const index = slider.value;
+    // Actualizar el popup con la información del primer punto
+    const initialPopupContent = `
+        <b>Usuario:</b> ${userId}<br>
+        <b>Latitud:</b> ${initialPoint.Latitud}<br>
+        <b>Longitud:</b> ${initialPoint.Longitud}<br>
+        <b>Fecha:</b> ${initialPoint.Fecha.split('T')[0]}<br>
+        <b>Hora:</b> ${initialPoint.Hora}<br>
+        <b>RPM:</b> ${initialPoint.rpm || 'No disponible'}
+    `;
+    marker.bindPopup(initialPopupContent).openPopup();
+
+    // Agregar el evento para mover el marcador solo para el usuario seleccionado
+    newSlider.addEventListener('input', function moveMarker() {
+        const index = newSlider.value;
         const dataPoint = userData[index];
 
-        const marker = markers[userId];
         const latlng = [dataPoint.Latitud, dataPoint.Longitud];
-
         marker.setLatLng(latlng);
         map.setView(latlng);
 
-        // Actualizar el popup con la información sobre la polilínea
+        // Actualizar el popup con la información del punto actual
         const popupContent = `
             <b>Usuario:</b> ${userId}<br>
             <b>Latitud:</b> ${dataPoint.Latitud}<br>
             <b>Longitud:</b> ${dataPoint.Longitud}<br>
-            <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br> <!-- Solo muestra la fecha -->
+            <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br>
             <b>Hora:</b> ${dataPoint.Hora}<br>
-            <b>RPM:</b> ${dataPoint.RPM || 'No disponible'}
+            <b>RPM:</b> ${dataPoint.rpm || 'No disponible'}
         `;
         marker.bindPopup(popupContent).openPopup();
-    }
+    });
 }

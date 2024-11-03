@@ -101,6 +101,7 @@ app.get('/api/historico', (req, res) => {
 });
 
 
+
 // Ruta para obtener todos los datos en formato JSON
 app.get('/api/ver-datos', (req, res) => {
     connection.query('SELECT * FROM coordenadas ORDER BY id DESC', (err, results) => {
@@ -118,7 +119,7 @@ app.get('/name', (req, res) => {
 });
 
 // Iniciar el servidor HTTP
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
 });
