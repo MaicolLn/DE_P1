@@ -70,12 +70,22 @@ body {
 #sidebar p strong {
     font-weight: bold;
 }
+h3 {
+    font-size: 12px;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold; /* Texto en negrita para destacar */
+    color: #b2f4fa; /* Color de texto oscuro */
+    margin-top: 20px; /* Separación superior para que no esté pegado a otros elementos */
+    margin-bottom: 10px; /* Separación inferior */
+    text-align: left; /* Alineación a la izquierda */
+    padding-left: 10px; /* Espacio a la izquierda para dar un aspecto de indentación */
 
+}
 /* Botón de control del menú como flecha en círculo */
 #toggle-button {
     position: absolute;
     left: 10px;
-    top: 50%;
+    top: 47%;
     transform: translateY(-50%);
     background-color: #b2f4fa;
     color: black;
@@ -95,7 +105,7 @@ body {
 
 /* Nueva posición del botón cuando la sidebar está abierta */
 #toggle-button.sidebar-open {
-    left: calc(30% - 10px); /* Ajusta el botón al centro del lado derecho de la sidebar */
+    left: calc(30% - 0.1px); /* Ajusta el botón al centro del lado derecho de la sidebar */
 }
 #toggle-button:hover {
     background-color: #0056b3;
