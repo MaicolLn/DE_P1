@@ -7,6 +7,7 @@ let polylines = []; // Array para almacenar todas las polilíneas actuales
 let markers = {}; // Almacenar el marcador de cada usuario
 let sliderData = {}; // Almacenar los datos de cada usuario para el slider
 let selectedUser = null; // Usuario actualmente seleccionado para el slider
+let startEndMarkers = []; // Array para almacenar los marcadores de inicio y fin
 
 // Prevenir que los usuarios escriban directamente en los campos de fecha
 const dateInputs = document.querySelectorAll('input[type="datetime-local"]');
@@ -27,6 +28,60 @@ function getCurrentDateTime() {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+// Mostrar la sección de fecha y hora final al seleccionar una fecha inicial
+document.getElementById('startDate').addEventListener('change', function() {
+    const startDate = new Date(this.value); // Fecha inicial seleccionada
+    const endDateInput = document.getElementById('endDate'); // Campo de fecha final
+    const endDate = new Date(endDateInput.value); // Fecha final actual
+
+    // Establecer el mínimo de la fecha final como la fecha inicial seleccionada
+    endDateInput.min = this.value;
+
+    // Verificar si la fecha inicial es mayor a la fecha final
+    if (endDateInput.value && startDate > endDate) {
+        this.value = ''; // Limpiar el campo startDate si es mayor a la fecha final
+        alert('La fecha inicial no puede ser mayor que la fecha final.');
+    } else if (endDateInput.value && startDate.toDateString() === endDate.toDateString()) {
+        // Si los días son iguales, comparar las horas y minutos
+        const startHour = startDate.getHours();
+        const startMinute = startDate.getMinutes();
+        const endHour = endDate.getHours();
+        const endMinute = endDate.getMinutes();
+
+        // Si la hora de inicio es mayor o igual a la hora de fin, limpiar la fecha inicial
+        if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
+            this.value = ''; // Limpiar el campo startDate si la hora es mayor o igual
+            alert('La hora de la fecha inicial no puede ser mayor o igual que la hora de la fecha final.');
+        }
+    }
+});
+
+document.getElementById('endDate').addEventListener('change', function() {
+    const endDate = new Date(this.value);
+    const startDate = new Date(document.getElementById('startDate').value);
+    const startDateInput = document.getElementById('startDate');
+
+    // Verificar si la fecha final es anterior a la fecha inicial
+    if (endDate < startDate) {
+        this.value = '';
+        alert('La fecha final no puede ser anterior a la fecha inicial.');
+    } else if (endDate.toDateString() === startDate.toDateString()) {
+        // Si los días son iguales, comparar las horas y minutos
+        const endHour = endDate.getHours();
+        const endMinute = endDate.getMinutes();
+        const startHour = startDate.getHours();
+        const startMinute = startDate.getMinutes();
+
+        if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
+            this.value = ''; // Limpiar el campo endDate si la hora de fin es menor o igual a la de inicio
+            alert('La hora de la fecha final no puede ser anterior o igual a la hora de la fecha inicial.');
+        }
+    }
+
+    // Establecer el máximo de la fecha inicial como la fecha final seleccionada
+    startDateInput.max = this.value;
+});
+
 // Aplicar la fecha máxima a los campos de tipo datetime-local
 document.addEventListener('DOMContentLoaded', function() {
     const currentDateTime = getCurrentDateTime();
@@ -43,6 +98,10 @@ function clearPreviousResults() {
     Object.values(markers).forEach(marker => map.removeLayer(marker));
     markers = {}; // Limpiar el array de marcadores
     
+    // Borrar los marcadores de inicio y fin
+    startEndMarkers.forEach(marker => map.removeLayer(marker));
+    startEndMarkers = []; // Limpiar el array de marcadores de inicio y fin
+
     sliderData = {}; // Limpiar los datos de cada usuario para el slider
     selectedUser = null; // Restablecer el usuario seleccionado para el slider
 
@@ -99,6 +158,18 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
                 const marker = L.marker(coordinates[0], { icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/808080/marker.png', iconSize: [25, 41] }) }).addTo(map);
                 marker.bindPopup(`Usuario ${item.id_user}`);
                 markers[item.id_user] = marker;
+
+                // Crear marcadores de inicio (verde) y fin (rojo)
+                const startMarker = L.marker(coordinates[0], {
+                    icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/00ff00/marker.png', iconSize: [25, 41] }) // Verde
+                }).addTo(map).bindPopup(`Inicio - Usuario ${item.id_user}`);
+                
+                const endMarker = L.marker(coordinates[coordinates.length - 1], {
+                    icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/ff0000/marker.png', iconSize: [25, 41] }) // Rojo
+                }).addTo(map).bindPopup(`Fin - Usuario ${item.id_user}`);
+
+                // Agregar los marcadores de inicio y fin al array de startEndMarkers
+                startEndMarkers.push(startMarker, endMarker);
             });
 
             // Mostrar solo las opciones de usuario seleccionadas para el slider
