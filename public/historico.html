@@ -15,30 +15,29 @@
         
         <!-- Botón de flecha para volver -->
         <button type="button" onclick="window.history.back()" id="backButton">&#8592;</button> <!-- Código de flecha hacia la izquierda -->
-    
-        <!-- Resto del formulario -->
         <div class="row">
+            <div class="column">
+                <p><strong>Seleccionar Usuario(s):</strong></p>
+                <label><input type="checkbox" name="userIds" value="a" onchange="toggleDateFields()"> Usuario A</label>
+                <label><input type="checkbox" name="userIds" value="b" onchange="toggleDateFields()"> Usuario B</label>
+            </div>
+        </div>      
+
+        <!-- Opciones de selección de fecha inicial y final -->
+        <div class="row" id="startDateSection" style="display: none;">
             <div class="column">
                 <p><strong>Fecha Inicial:</strong></p>
                 <input type="datetime-local" id="startDate" required>
             </div>
         </div>
         
-        <div class="row" id="endDateSection">
+        <div class="row" id="endDateSection" style="display: none;">
             <div class="column">
                 <p><strong>Fecha Final:</strong></p>
                 <input type="datetime-local" id="endDate" required>
             </div>   
         </div>  
-        
-        <div class="row">
-            <div class="column">
-                <p><strong>Seleccionar Usuario(s):</strong></p>
-                <label><input type="checkbox" name="userIds" value="a"> Usuario A</label>
-                <label><input type="checkbox" name="userIds" value="b"> Usuario B</label>
-            </div>
-        </div>        
-            
+          
         <div class="button-container">
             <button type="submit">Consultar</button>
         </div>        
@@ -53,10 +52,22 @@
 
     </form>
     
-
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="/js/historico.js"></script> <!-- Enlace al archivo JS -->
+    
+    <script>
+        function toggleDateFields() {
+            // Obtener todos los checkboxes de usuarios
+            const checkboxes = document.querySelectorAll('input[name="userIds"]');
+            // Verificar si al menos uno está seleccionado
+            const atLeastOneChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            
+            // Mostrar u ocultar las secciones de fechas según el estado de selección
+            document.getElementById('startDateSection').style.display = atLeastOneChecked ? 'block' : 'none';
+            document.getElementById('endDateSection').style.display = atLeastOneChecked ? 'block' : 'none';
+        }
+    </script>
 </body>
 </html>
