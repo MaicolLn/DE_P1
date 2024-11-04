@@ -35,7 +35,27 @@ body {
     border-radius: 20px;
     padding: 10px 15px;
 }
+#info-container {
+    margin-top: 20px;
+    background-color:#b2f4fa; /* Color de fondo suave */
+    border: 1px solid #ddd; /* Borde gris claro */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 15px; /* Espacio interno */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    font-family: Arial, sans-serif; /* Fuente legible */
+    color: #333; /* Color del texto */
+    max-width: 600px; /* Ancho máximo */
+    line-height: 1.6; /* Mejorar la legibilidad del texto */
+}
 
+#info-container h3 {
+    margin-top: 0; /* Eliminar margen superior del encabezado */
+    color: #0056b3; /* Color del encabezado */
+}
+
+#info-container p {
+    margin-bottom: 10px; /* Espaciado entre párrafos */
+}
 .row {
     display: flex; 
     width: 70%; 
@@ -58,7 +78,7 @@ body {
 
 #map {
     height: 100vh;
-    width: 97%;
+    width:100%;
 }
 
 button {

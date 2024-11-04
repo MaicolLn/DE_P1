@@ -1,10 +1,11 @@
-const map = L.map('map').setView([0, 0], 17);
-
+const map = L.map('map',{
+    zoomControl: false // Desactiva el control de zoom por defecto
+}).setView([0, 0], 17);
 // Configuración del tile layer de Leaflet usando OpenStreetMap
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.control.zoom({
+    position: 'topright' // Coloca el control de zoom en la esquina superior derecha
 }).addTo(map);
-
 let userHasZoomed = false;
 
 // Eventos para rastrear si el usuario ha hecho zoom o movido el mapa
@@ -116,13 +117,13 @@ document.getElementById('toggle-button').addEventListener('click', function() {
         mapContainer.classList.remove('fullscreen');
         toggleButton.innerHTML = '&#9668;'; // Cambiar flecha a la izquierda
         toggleButton.classList.add('sidebar-open'); // Añadir clase para cambiar posición
-        mapContainer.classList.add('leaflet-control-zoom-hidden'); // Ocultar controles de zoom
+        mapContainer.classList.add('sidebar-open'); // Añadir clase para controles de zoom en la esquina
     } else {
         sidebar.classList.add('closed');
         mapContainer.classList.add('fullscreen');
         toggleButton.innerHTML = '&#9658;'; // Cambiar flecha a la derecha
         toggleButton.classList.remove('sidebar-open'); // Quitar clase para posición inicial
-        mapContainer.classList.remove('leaflet-control-zoom-hidden'); // Mostrar controles de zoom
+        mapContainer.classList.remove('sidebar-open'); // Quitar clase para controles de zoom en la esquina
     }
 
     setTimeout(() => {
