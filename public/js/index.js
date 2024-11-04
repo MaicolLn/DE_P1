@@ -1,9 +1,6 @@
 const map = L.map('map').setView([0, 0], 17);
-
 // Configuración del tile layer de Leaflet usando OpenStreetMap
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 let userHasZoomed = false;
 

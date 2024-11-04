@@ -20,7 +20,9 @@ body {
     transform: translateX(0);
     z-index: 1000;
 }
-
+#map.sidebar-open .leaflet-control-zoom {
+display: none;
+}
 #sidebar.closed {
     transform: translateX(-100%);
 }
@@ -111,16 +113,7 @@ h3 {
     background-color: #0056b3;
     color: white;
 }
-#map.leaflet-control-zoom-hidden .leaflet-control-zoom {
-    display: none;
-}
 
-/* Ajustar la posición de los controles de zoom cuando el sidebar está abierto */
-#map.sidebar-open .leaflet-control-zoom {
-    top: 10px; /* Ajusta la posición de los controles de zoom */
-    right: 10px;
-    left: auto;
-}
 button {
     background-color: #0056b3;
     color: black;
