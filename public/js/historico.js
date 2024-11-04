@@ -223,35 +223,33 @@ function updateSliderForUser(userId) {
     marker.setLatLng(initialLatLng);
     map.setView(initialLatLng);
 
-    // Actualizar el popup con la información del primer punto
-    const initialPopupContent = `
-        <b>Usuario:</b> ${userId}<br>
-        <b>Latitud:</b> ${initialPoint.Latitud}<br>
-        <b>Longitud:</b> ${initialPoint.Longitud}<br>
-        <b>Fecha:</b> ${initialPoint.Fecha.split('T')[0]}<br>
-        <b>Hora:</b> ${initialPoint.Hora}<br>
-        <b>RPM:</b> ${initialPoint.rpm || 'No disponible'}
-    `;
-    marker.bindPopup(initialPopupContent).openPopup();
+    // Actualizar el contenedor de información con los datos del primer punto
+    updateInfoContainer(userId, initialPoint);
 
     // Agregar el evento para mover el marcador solo para el usuario seleccionado
     newSlider.addEventListener('input', function moveMarker() {
         const index = newSlider.value;
         const dataPoint = userData[index];
-
+        const infoContainer = document.getElementById('info-container');
+        infoContainer.style.display = 'none'; // Asegurarse de que esté oculto al inicio
         const latlng = [dataPoint.Latitud, dataPoint.Longitud];
         marker.setLatLng(latlng);
         map.setView(latlng);
-
-        // Actualizar el popup con la información del punto actual
-        const popupContent = `
-            <b>Usuario:</b> ${userId}<br>
-            <b>Latitud:</b> ${dataPoint.Latitud}<br>
-            <b>Longitud:</b> ${dataPoint.Longitud}<br>
-            <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br>
-            <b>Hora:</b> ${dataPoint.Hora}<br>
-            <b>RPM:</b> ${dataPoint.rpm || 'No disponible'}
-        `;
-        marker.bindPopup(popupContent).openPopup();
+        infoContainer.style.display = 'block'; // Mostrar el contenedor de información
+        // Actualizar el contenedor de información con los datos del punto actual
+        updateInfoContainer(userId, dataPoint);
     });
+}
+
+// Función para actualizar el contenedor de información
+function updateInfoContainer(userId, dataPoint) {
+    const infoContainer = document.getElementById('info-container');
+    infoContainer.innerHTML = `
+        <b>Usuario:</b> ${userId}<br>
+        <b>Latitud:</b> ${dataPoint.Latitud}<br>
+        <b>Longitud:</b> ${dataPoint.Longitud}<br>
+        <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br>
+        <b>Hora:</b> ${dataPoint.Hora}<br>
+        <b>RPM:</b> ${dataPoint.rpm || 'No disponible'}
+    `;
 }
