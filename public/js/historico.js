@@ -114,7 +114,13 @@ function clearPreviousResults() {
 
     // Ocultar la selección de usuario
     document.getElementById('slider-user-selection').style.display = 'none';
+
+    // Limpiar el contenido del contenedor de información o esconderlo
+    const infoContainer = document.getElementById('info-container');
+    infoContainer.innerHTML = ''; // Limpia el contenido
+    infoContainer.style.display = 'none'; // O también podrías esconderlo si lo prefieres
 }
+
 
 document.getElementById('historicalForm').addEventListener('submit', function(e) {
     e.preventDefault();
