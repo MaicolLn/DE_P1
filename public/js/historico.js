@@ -1,10 +1,8 @@
-const map = L.map('map', {
-    zoomControl: false // Desactiva el control de zoom por defecto
-}).setView([11.018055, -74.851111], 13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-L.control.zoom({
-    position: 'topright' // Coloca el control de zoom en la esquina superior derecha
+const map = L.map('map').setView([11.018055, -74.851111], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+
 let polylines = []; // Array para almacenar todas las polilíneas actuales
 let markers = {}; // Almacenar el marcador de cada usuario
 let sliderData = {}; // Almacenar los datos de cada usuario para el slider
@@ -225,33 +223,35 @@ function updateSliderForUser(userId) {
     marker.setLatLng(initialLatLng);
     map.setView(initialLatLng);
 
-    // Actualizar el contenedor de información con los datos del primer punto
-    updateInfoContainer(userId, initialPoint);
+    // Actualizar el popup con la información del primer punto
+    const initialPopupContent = `
+        <b>Usuario:</b> ${userId}<br>
+        <b>Latitud:</b> ${initialPoint.Latitud}<br>
+        <b>Longitud:</b> ${initialPoint.Longitud}<br>
+        <b>Fecha:</b> ${initialPoint.Fecha.split('T')[0]}<br>
+        <b>Hora:</b> ${initialPoint.Hora}<br>
+        <b>RPM:</b> ${initialPoint.rpm || 'No disponible'}
+    `;
+    marker.bindPopup(initialPopupContent).openPopup();
 
     // Agregar el evento para mover el marcador solo para el usuario seleccionado
     newSlider.addEventListener('input', function moveMarker() {
         const index = newSlider.value;
         const dataPoint = userData[index];
-        const infoContainer = document.getElementById('info-container');
-        infoContainer.style.display = 'none'; // Asegurarse de que esté oculto al inicio
+
         const latlng = [dataPoint.Latitud, dataPoint.Longitud];
         marker.setLatLng(latlng);
         map.setView(latlng);
-        infoContainer.style.display = 'block'; // Mostrar el contenedor de información
-        // Actualizar el contenedor de información con los datos del punto actual
-        updateInfoContainer(userId, dataPoint);
-    });
-}
 
-// Función para actualizar el contenedor de información
-function updateInfoContainer(userId, dataPoint) {
-    const infoContainer = document.getElementById('info-container');
-    infoContainer.innerHTML = `
-        <b>Usuario:</b> ${userId}<br>
-        <b>Latitud:</b> ${dataPoint.Latitud}<br>
-        <b>Longitud:</b> ${dataPoint.Longitud}<br>
-        <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br>
-        <b>Hora:</b> ${dataPoint.Hora}<br>
-        <b>RPM:</b> ${dataPoint.rpm || 'No disponible'}
-    `;
+        // Actualizar el popup con la información del punto actual
+        const popupContent = `
+            <b>Usuario:</b> ${userId}<br>
+            <b>Latitud:</b> ${dataPoint.Latitud}<br>
+            <b>Longitud:</b> ${dataPoint.Longitud}<br>
+            <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br>
+            <b>Hora:</b> ${dataPoint.Hora}<br>
+            <b>RPM:</b> ${dataPoint.rpm || 'No disponible'}
+        `;
+        marker.bindPopup(popupContent).openPopup();
+    });
 }
