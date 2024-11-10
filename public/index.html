@@ -11,18 +11,6 @@
 <body>
     <div id="sidebar">
         <img src="logo.png" alt="Logo" id="logo"> <!-- Cambia esta ruta por la de tu logo -->
-        <h3>Usuario B</h3>
-        <div class="row">
-            <div class="column">
-                <p><strong>Latitud:</strong> <span id="lat_b">--</span></p>
-                <p><strong>Longitud:</strong> <span id="lon_b">--</span></p>
-            </div>
-            <div class="column">
-                <p><strong>Fecha:</strong> <span id="fecha_b">--</span></p>
-                <p><strong>Hora:</strong> <span id="hora_b">--</span></p>
-            </div>
-        </div>
-    
         <h3>Usuario A</h3>
         <div class="row">
             <div class="column">
@@ -34,9 +22,19 @@
                 <p><strong>Hora:</strong> <span id="hora_a">--</span></p>
             </div>
         </div>
-    
         <p><strong>RPM:</strong> <span id="rpm">--</span></p>
-        <button onclick="window.location.href='/historico';">Consulta por Tiempo</button>
+        <h3>Usuario B</h3>
+        <div class="row">
+            <div class="column">
+                <p><strong>Latitud:</strong> <span id="lat_b">--</span></p>
+                <p><strong>Longitud:</strong> <span id="lon_b">--</span></p>
+            </div>
+            <div class="column">
+                <p><strong>Fecha:</strong> <span id="fecha_b">--</span></p>
+                <p><strong>Hora:</strong> <span id="hora_b">--</span></p>
+            </div>
+        </div>
+        <button onclick="window.location.href='/historico';">Históricos</button>
     </div>
 
     <!-- Botón de flecha para abrir/cerrar el menú -->
