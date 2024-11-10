@@ -1,8 +1,12 @@
-const map = L.map('map').setView([11.018055, -74.851111], 13);
+const map = L.map('map',{
+    zoomControl: false // Desactiva el control de zoom por defecto
+}).setView([11.018055, -74.851111], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
-
+L.control.zoom({
+    position: 'topright' // Coloca el control de zoom en la esquina superior derecha
+}).addTo(map);
 let polylines = []; // Array para almacenar todas las polilíneas actuales
 let markers = {}; // Almacenar el marcador de cada usuario
 let sliderData = {}; // Almacenar los datos de cada usuario para el slider
