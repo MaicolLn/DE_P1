@@ -77,46 +77,32 @@ function fetchData() {
                     lastMarker: L.marker([lat, lon], { icon: taxiIcon }).addTo(map)
                 };
 
-                // Añadir animación al primer marcador
-                const markerElement = userPolylines[id_user].lastMarker._icon;
-                markerElement.classList.add('bounce');
-                setTimeout(() => {
-                    markerElement.classList.remove('bounce');
-                }, 3000);
-
                 let infoVisible = false;
                 userPolylines[id_user].lastMarker.on('click', function () {
                     if (infoVisible) {
-                        userPolylines[id_user].lastMarker.unbindPopup();
+                        userPolylines[id_user].lastMarker.closePopup();
                         infoVisible = false;
                     } else {
-                        userPolylines[id_user].lastMarker.bindPopup(`
-                            Usuario: ${id_user} - RPM: ${id_user === "a" ? rpm : 'N/A'}<br>
-                            Latitud: ${lat}<br>
-                            Longitud: ${lon}<br>
-                            Fecha: ${fechaSolo}<br>
-                            Hora: ${data.Hora}
-                        `).openPopup();
+                        userPolylines[id_user].lastMarker.bindPopup(
+                            `Usuario: ${id_user} - RPM: ${id_user === "a" ? rpm : 'N/A'}<br>Latitud: ${lat}<br>Longitud: ${lon}<br>Fecha: ${fechaSolo}<br>Hora: ${data.Hora}`
+                        ).openPopup();
                         infoVisible = true;
                     }
                 });
             } else {
-                // Actualizar la posición y contenido del marcador existente
+                // Actualizar el marcador y las coordenadas de la polilínea
                 userPolylines[id_user].lastMarker.setLatLng([lat, lon]);
-                userPolylines[id_user].lastMarker.bindPopup(`
-                    Usuario: ${id_user} - RPM: ${id_user === "a" ? rpm : 'N/A'}<br>
-                    Latitud: ${lat}<br>
-                    Longitud: ${lon}<br>
-                    Fecha: ${fechaSolo}<br>
-                    Hora: ${data.Hora}
-                `).openPopup();
+                userPolylines[id_user].coordinates.push([lat, lon]);
+                userPolylines[id_user].polyline.setLatLngs(userPolylines[id_user].coordinates);
+
+                // Verificar si el popup está abierto y actualizar su contenido sin abrirlo automáticamente
+                if (userPolylines[id_user].lastMarker.isPopupOpen()) {
+                    userPolylines[id_user].lastMarker.setPopupContent(
+                        `Usuario: ${id_user} - RPM: ${id_user === "a" ? rpm : 'N/A'}<br>Latitud: ${lat}<br>Longitud: ${lon}<br>Fecha: ${fechaSolo}<br>Hora: ${data.Hora}`
+                    );
+                }
             }
 
-            // Actualizar las coordenadas de la polilínea
-            userPolylines[id_user].coordinates.push([lat, lon]);
-            userPolylines[id_user].polyline.setLatLngs(userPolylines[id_user].coordinates);
-
-            // Mover la vista del mapa si el usuario no ha interactuado
             if (!userHasZoomed) {
                 map.setView([lat, lon], 17);
             }
