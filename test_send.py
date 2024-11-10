@@ -1,28 +1,24 @@
 import socket
 import json
+import time  # Importar la librería para usar sleep
 
-# Datos del payload con el nuevo campo id_user y rpm
-data = {
-    "latitud": 11.0201548,
-    "longitud": -74.870111,
-    "fecha": "2024-10-27",
-    "hora": "14:49:25.249",      # Valor de ejemplo para rpm
-    "id_user": "c"     # Añadimos el campo id_user con el valor "a"
-}
-
-# Convertir el diccionario a JSON
-payload = json.dumps(data).encode('utf-8')
+# Leer los datos desde el archivo JSON
+with open('test.json', 'r') as file:
+    datos = json.load(file)
 
 # Configuración del socket UDP
-udp_ip = "181.235.94.231"  # IP de destino, cambia según sea necesario
-udp_port = 10000           # Puerto de destino
+udp_ip = "18.207.94.236"  # IP de destino, cambia según sea necesario
+udp_port = 10000          # Puerto de destino
 
 # Crear el socket UDP
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-# Enviar el payload
-sock.sendto(payload, (udp_ip, udp_port))
-print(f"Payload enviado: {payload}")
+# Enviar cada fila de datos como payload JSON con un delay de 2 segundos
+for fila in datos:
+    payload = json.dumps(fila).encode('utf-8')
+    sock.sendto(payload, (udp_ip, udp_port))
+    print(f"Payload enviado: {payload}")
+    time.sleep(2)  # Esperar 2 segundos antes de enviar el siguiente payload
 
 # Cerrar el socket
 sock.close()
