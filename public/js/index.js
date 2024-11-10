@@ -1,18 +1,23 @@
-const map = L.map('map',{
+const map = L.map('map', {
     zoomControl: false // Desactiva el control de zoom por defecto
 }).setView([0, 0], 17);
+
 // Configuración del tile layer de Leaflet usando OpenStreetMap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
 L.control.zoom({
     position: 'topright' // Coloca el control de zoom en la esquina superior derecha
 }).addTo(map);
+
 let userHasZoomed = false;
+
 window.addEventListener('load', () => {
     document.getElementById('sidebar').classList.remove('closed');
     document.getElementById('toggle-button').innerHTML = '&#9668;'; // Ajustar la flecha
     document.getElementById('toggle-button').classList.add('sidebar-open');
     document.getElementById('map').classList.add('sidebar-open');
 });
+
 // Eventos para rastrear si el usuario ha hecho zoom o movido el mapa
 map.on('zoomstart', () => { userHasZoomed = true; });
 map.on('movestart', () => { userHasZoomed = true; });
@@ -72,9 +77,9 @@ function fetchData() {
                     lastMarker: L.marker([lat, lon], { icon: taxiIcon }).addTo(map)
                 };
 
+                // Añadir animación al primer marcador
                 const markerElement = userPolylines[id_user].lastMarker._icon;
                 markerElement.classList.add('bounce');
-
                 setTimeout(() => {
                     markerElement.classList.remove('bounce');
                 }, 3000);
@@ -85,19 +90,33 @@ function fetchData() {
                         userPolylines[id_user].lastMarker.unbindPopup();
                         infoVisible = false;
                     } else {
-                        userPolylines[id_user].lastMarker.bindPopup(
-                            `Usuario: ${id_user} - RPM: ${id_user === "a" ? rpm : 'N/A'}<br>Latitud: ${lat}<br>Longitud: ${lon}<br>Fecha: ${fechaSolo}<br>Hora: ${data.Hora}`
-                        ).openPopup();
+                        userPolylines[id_user].lastMarker.bindPopup(`
+                            Usuario: ${id_user} - RPM: ${id_user === "a" ? rpm : 'N/A'}<br>
+                            Latitud: ${lat}<br>
+                            Longitud: ${lon}<br>
+                            Fecha: ${fechaSolo}<br>
+                            Hora: ${data.Hora}
+                        `).openPopup();
                         infoVisible = true;
                     }
                 });
             } else {
+                // Actualizar la posición y contenido del marcador existente
                 userPolylines[id_user].lastMarker.setLatLng([lat, lon]);
+                userPolylines[id_user].lastMarker.bindPopup(`
+                    Usuario: ${id_user} - RPM: ${id_user === "a" ? rpm : 'N/A'}<br>
+                    Latitud: ${lat}<br>
+                    Longitud: ${lon}<br>
+                    Fecha: ${fechaSolo}<br>
+                    Hora: ${data.Hora}
+                `).openPopup();
             }
 
+            // Actualizar las coordenadas de la polilínea
             userPolylines[id_user].coordinates.push([lat, lon]);
             userPolylines[id_user].polyline.setLatLngs(userPolylines[id_user].coordinates);
 
+            // Mover la vista del mapa si el usuario no ha interactuado
             if (!userHasZoomed) {
                 map.setView([lat, lon], 17);
             }
@@ -107,7 +126,7 @@ function fetchData() {
         });
 }
 
-
+// Llamada periódica a fetchData cada segundo
 setInterval(fetchData, 1000);
 fetchData();
 
@@ -131,13 +150,8 @@ document.getElementById('toggle-button').addEventListener('click', function() {
         mapContainer.classList.remove('sidebar-open'); // Quitar clase para controles de zoom en la esquina
     }
 
+    // Ajustar el tamaño del mapa después de modificar la visibilidad del sidebar
     setTimeout(() => {
         map.invalidateSize();
     }, 300);
 });
-
-
-
-
-
-

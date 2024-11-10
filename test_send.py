@@ -7,7 +7,7 @@ with open('test.json', 'r') as file:
     datos = json.load(file)
 
 # Configuración del socket UDP
-udp_ip = "18.207.94.236"  # IP de destino, cambia según sea necesario
+udp_ip = "181.235.89.136"  # IP de destino, cambia según sea necesario
 udp_port = 10000          # Puerto de destino
 
 # Crear el socket UDP
