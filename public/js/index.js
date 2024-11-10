@@ -7,7 +7,12 @@ L.control.zoom({
     position: 'topright' // Coloca el control de zoom en la esquina superior derecha
 }).addTo(map);
 let userHasZoomed = false;
-
+window.addEventListener('load', () => {
+    document.getElementById('sidebar').classList.remove('closed');
+    document.getElementById('toggle-button').innerHTML = '&#9668;'; // Ajustar la flecha
+    document.getElementById('toggle-button').classList.add('sidebar-open');
+    document.getElementById('map').classList.add('sidebar-open');
+});
 // Eventos para rastrear si el usuario ha hecho zoom o movido el mapa
 map.on('zoomstart', () => { userHasZoomed = true; });
 map.on('movestart', () => { userHasZoomed = true; });
