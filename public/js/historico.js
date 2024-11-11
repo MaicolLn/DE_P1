@@ -1,4 +1,4 @@
-const map = L.map('map', {
+const map = L.map('map',{
     zoomControl: false // Desactiva el control de zoom por defecto
 }).setView([11.018055, -74.851111], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
