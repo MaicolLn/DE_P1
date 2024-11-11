@@ -1,4 +1,4 @@
-const map = L.map('map',{
+const map = L.map('map', {
     zoomControl: false // Desactiva el control de zoom por defecto
 }).setView([11.018055, -74.851111], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -7,6 +7,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 L.control.zoom({
     position: 'topright' // Coloca el control de zoom en la esquina superior derecha
 }).addTo(map);
+
 let polylines = []; // Array para almacenar todas las polilíneas actuales
 let markers = {}; // Almacenar el marcador de cada usuario
 let sliderData = {}; // Almacenar los datos de cada usuario para el slider
@@ -16,9 +17,9 @@ let startEndMarkers = []; // Array para almacenar los marcadores de inicio y fin
 // Definir un ícono personalizado para los marcadores
 const customIcon = L.icon({
     iconUrl: 'taxi2.png', // Ruta al ícono personalizado
-    iconSize: [32, 32], // Tamaño del ícono (ajusta según sea necesario)
-    iconAnchor: [16, 32], // Punto de anclaje (ajusta según el diseño)
-    popupAnchor: [0, -32] // Punto de anclaje del popup
+    iconSize: [40, 40], // Tamaño del ícono (ajusta según sea necesario)
+    iconAnchor: [16, 16], // Punto de anclaje (ajusta según el diseño)
+    popupAnchor: [0, -16] // Punto de anclaje del popup
 });
 
 // Función para obtener la fecha actual en formato 'YYYY-MM-DDTHH:MM'
@@ -31,6 +32,14 @@ function getCurrentDateTime() {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
+
+// Actualiza el valor máximo de las fechas dinámicamente cuando el usuario hace clic
+document.getElementById('startDate').addEventListener('focus', function() {
+    this.max = getCurrentDateTime(); // Actualizar el máximo para la fecha de inicio
+});
+document.getElementById('endDate').addEventListener('focus', function() {
+    this.max = getCurrentDateTime(); // Actualizar el máximo para la fecha de fin
+});
 
 // Prevenir que los usuarios escriban directamente en los campos de fecha
 const dateInputs = document.querySelectorAll('input[type="datetime-local"]');
@@ -87,6 +96,7 @@ document.getElementById('endDate').addEventListener('change', function() {
     startDateInput.max = this.value; // Establecer el máximo de la fecha inicial como la fecha final seleccionada
 });
 
+// Establecer los valores máximos inicialmente y dinámicamente al cargar el contenido
 document.addEventListener('DOMContentLoaded', function() {
     const currentDateTime = getCurrentDateTime();
     document.getElementById('startDate').max = currentDateTime;
