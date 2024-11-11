@@ -1,7 +1,9 @@
-const map = L.map('map', {
+const map = L.map('map',{
     zoomControl: false // Desactiva el control de zoom por defecto
 }).setView([11.018055, -74.851111], 13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
 L.control.zoom({
     position: 'topright' // Coloca el control de zoom en la esquina superior derecha
 }).addTo(map);
@@ -11,12 +13,12 @@ let sliderData = {}; // Almacenar los datos de cada usuario para el slider
 let selectedUser = null; // Usuario actualmente seleccionado para el slider
 let startEndMarkers = []; // Array para almacenar los marcadores de inicio y fin
 
-// Prevenir que los usuarios escriban directamente en los campos de fecha
-const dateInputs = document.querySelectorAll('input[type="datetime-local"]');
-dateInputs.forEach(input => {
-    input.addEventListener('keydown', (e) => {
-        e.preventDefault();
-    });
+// Definir un ícono personalizado para los marcadores
+const customIcon = L.icon({
+    iconUrl: 'taxi2.png', // Ruta al ícono personalizado
+    iconSize: [32, 32], // Tamaño del ícono (ajusta según sea necesario)
+    iconAnchor: [16, 32], // Punto de anclaje (ajusta según el diseño)
+    popupAnchor: [0, -32] // Punto de anclaje del popup
 });
 
 // Función para obtener la fecha actual en formato 'YYYY-MM-DDTHH:MM'
@@ -30,16 +32,24 @@ function getCurrentDateTime() {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+// Prevenir que los usuarios escriban directamente en los campos de fecha
+const dateInputs = document.querySelectorAll('input[type="datetime-local"]');
+dateInputs.forEach(input => {
+    input.addEventListener('keydown', (e) => {
+        e.preventDefault();
+    });
+});
+
 // Mostrar la sección de fecha y hora final al seleccionar una fecha inicial
 document.getElementById('startDate').addEventListener('change', function() {
-    const startDate = new Date(this.value);
-    const endDateInput = document.getElementById('endDate');
-    const endDate = new Date(endDateInput.value);
+    const startDate = new Date(this.value); // Fecha inicial seleccionada
+    const endDateInput = document.getElementById('endDate'); // Campo de fecha final
+    const endDate = new Date(endDateInput.value); // Fecha final actual
 
-    endDateInput.min = this.value;
+    endDateInput.min = this.value; // Establecer el mínimo de la fecha final como la fecha inicial seleccionada
 
     if (endDateInput.value && startDate > endDate) {
-        this.value = '';
+        this.value = ''; // Limpiar el campo startDate si es mayor a la fecha final
         alert('La fecha inicial no puede ser mayor que la fecha final.');
     } else if (endDateInput.value && startDate.toDateString() === endDate.toDateString()) {
         const startHour = startDate.getHours();
@@ -48,7 +58,7 @@ document.getElementById('startDate').addEventListener('change', function() {
         const endMinute = endDate.getMinutes();
 
         if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
-            this.value = '';
+            this.value = ''; // Limpiar el campo startDate si la hora es mayor o igual
             alert('La hora de la fecha inicial no puede ser mayor o igual que la hora de la fecha final.');
         }
     }
@@ -74,39 +84,14 @@ document.getElementById('endDate').addEventListener('change', function() {
         }
     }
 
-    startDateInput.max = this.value;
+    startDateInput.max = this.value; // Establecer el máximo de la fecha inicial como la fecha final seleccionada
 });
 
-// Aplicar la fecha máxima a los campos de tipo datetime-local
 document.addEventListener('DOMContentLoaded', function() {
     const currentDateTime = getCurrentDateTime();
     document.getElementById('startDate').max = currentDateTime;
     document.getElementById('endDate').max = currentDateTime;
 });
-
-function clearPreviousResults() {
-    polylines.forEach(polyline => map.removeLayer(polyline));
-    polylines = [];
-    
-    Object.values(markers).forEach(marker => map.removeLayer(marker));
-    markers = {};
-    
-    startEndMarkers.forEach(marker => map.removeLayer(marker));
-    startEndMarkers = [];
-
-    sliderData = {};
-    selectedUser = null;
-
-    const slider = document.getElementById('slider');
-    slider.value = 0;
-    slider.style.display = 'none';
-
-    document.getElementById('slider-user-selection').style.display = 'none';
-
-    const infoContainer = document.getElementById('info-container');
-    infoContainer.innerHTML = '';
-    infoContainer.style.display = 'none';
-}
 
 document.getElementById('historicalForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -130,11 +115,8 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
     fetch(`/api/historico?start=${startDateTimeISO}&end=${endDateTimeISO}&userIds=${userIds.join(',')}`)
         .then(response => response.json())
         .then(data => {
-            const infoContainer = document.getElementById('info-container');
-            
             if (data.length === 0) {
-                infoContainer.innerHTML = `<p style="color: red; font-weight: bold;">No se encontraron datos históricos para la fecha seleccionada.</p>`;
-                infoContainer.style.display = 'block';
+                alert('No se encontraron resultados para esta búsqueda.');
                 return;
             }
 
@@ -148,7 +130,7 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
 
                 sliderData[item.id_user] = item.records;
 
-                const marker = L.marker(coordinates[0], { icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/808080/marker.png', iconSize: [25, 41] }) }).addTo(map);
+                const marker = L.marker(coordinates[0], { icon: customIcon }).addTo(map);
                 marker.bindPopup(`Usuario ${item.id_user}`);
                 markers[item.id_user] = marker;
 
@@ -189,6 +171,26 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
         .catch(err => console.error('Error fetching data:', err));
 });
 
+function clearPreviousResults() {
+    polylines.forEach(polyline => map.removeLayer(polyline));
+    polylines = [];
+    
+    Object.values(markers).forEach(marker => map.removeLayer(marker));
+    markers = {};
+    
+    startEndMarkers.forEach(marker => map.removeLayer(marker));
+    startEndMarkers = [];
+    
+    sliderData = {};
+    selectedUser = null;
+
+    const slider = document.getElementById('slider');
+    slider.value = 0;
+    slider.style.display = 'none';
+
+    document.getElementById('slider-user-selection').style.display = 'none';
+}
+
 function updateSliderForUser(userId) {
     selectedUser = userId;
     const userData = sliderData[userId];
@@ -208,29 +210,32 @@ function updateSliderForUser(userId) {
     marker.setLatLng(initialLatLng);
     map.setView(initialLatLng);
 
-    updateInfoContainer(userId, initialPoint);
+    const initialPopupContent = `
+        <b>Usuario:</b> ${userId}<br>
+        <b>Latitud:</b> ${initialPoint.Latitud}<br>
+        <b>Longitud:</b> ${initialPoint.Longitud}<br>
+        <b>Fecha:</b> ${initialPoint.Fecha.split('T')[0]}<br>
+        <b>Hora:</b> ${initialPoint.Hora}<br>
+        <b>RPM:</b> ${initialPoint.rpm || 'No disponible'}
+    `;
+    marker.bindPopup(initialPopupContent).openPopup();
 
     newSlider.addEventListener('input', function moveMarker() {
         const index = newSlider.value;
         const dataPoint = userData[index];
-        const infoContainer = document.getElementById('info-container');
-        infoContainer.style.display = 'none';
+
         const latlng = [dataPoint.Latitud, dataPoint.Longitud];
         marker.setLatLng(latlng);
         map.setView(latlng);
-        infoContainer.style.display = 'block';
-        updateInfoContainer(userId, dataPoint);
-    });
-}
 
-function updateInfoContainer(userId, dataPoint) {
-    const infoContainer = document.getElementById('info-container');
-    infoContainer.innerHTML = `
-        <b>Usuario:</b> ${userId}<br>
-        <b>Latitud:</b> ${dataPoint.Latitud}<br>
-        <b>Longitud:</b> ${dataPoint.Longitud}<br>
-        <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br>
-        <b>Hora:</b> ${dataPoint.Hora}<br>
-        <b>RPM:</b> ${dataPoint.rpm || 'No disponible'}
-    `;
+        const popupContent = `
+            <b>Usuario:</b> ${userId}<br>
+            <b>Latitud:</b> ${dataPoint.Latitud}<br>
+            <b>Longitud:</b> ${dataPoint.Longitud}<br>
+            <b>Fecha:</b> ${dataPoint.Fecha.split('T')[0]}<br>
+            <b>Hora:</b> ${dataPoint.Hora}<br>
+            <b>RPM:</b> ${dataPoint.rpm || 'No disponible'}
+        `;
+        marker.bindPopup(popupContent).openPopup();
+    });
 }
