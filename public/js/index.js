@@ -18,11 +18,15 @@ window.addEventListener('load', () => {
     document.getElementById('map').classList.add('sidebar-open');
 });
 
-// Función para centrar el mapa en el usuario seleccionado al presionar el botón
+// Función para centrar el mapa en las últimas coordenadas conocidas del usuario seleccionado
 function centerOnUser(user) {
-    centeredUser = user; // Actualiza el usuario centrado
-    fetchData(); // Llama a fetchData para centrar el mapa inmediatamente en el usuario
+    centeredUser = user;
+    if (userLastCoordinates[user]) {
+        const [lat, lon] = userLastCoordinates[user];
+        map.setView([lat, lon], 17);
+    }
 }
+
 
 // Eventos para desactivar el centrado cuando el usuario hace zoom o mueve el mapa
 map.on('zoomstart', () => {
@@ -55,6 +59,9 @@ function fetchName() {
 fetchName();
 
 // Función para actualizar el mapa y la posición en tiempo real
+const userLastCoordinates = {};
+
+// Función para actualizar el mapa y la posición en tiempo real
 function fetchData() {
     fetch('/data')
         .then(response => response.json())
@@ -63,7 +70,10 @@ function fetchData() {
             const lat = data.Latitud;
             const lon = data.Longitud;
             const rpm = data.rpm;
-            const id_user = data.id_user; // Obtener el id del usuario
+            const id_user = data.id_user;
+
+            // Almacenar las últimas coordenadas del usuario
+            userLastCoordinates[id_user] = [lat, lon];
 
             // Actualizar los datos en el HTML según el usuario
             if (id_user === "a") {
@@ -111,11 +121,6 @@ function fetchData() {
                         `Usuario: ${id_user} - RPM: ${id_user === "a" ? rpm : 'N/A'}<br>Latitud: ${lat}<br>Longitud: ${lon}<br>Fecha: ${fechaSolo}<br>Hora: ${data.Hora}`
                     );
                 }
-            }
-
-            // Centrar el mapa en el usuario seleccionado si corresponde
-            if (centeredUser === id_user) {
-                map.setView([lat, lon], 17); // Centrado inmediato
             }
         })
         .catch(error => {
