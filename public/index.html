@@ -23,6 +23,8 @@
             </div>
         </div>
         <p><strong>RPM:</strong> <span id="rpm">--</span></p>
+        <button onclick="centerOnUser('a')" style="margin-top: 10px;">Centrar en Usuario A</button>
+        
         <h3>Usuario B</h3>
         <div class="row">
             <div class="column">
@@ -34,7 +36,9 @@
                 <p><strong>Hora:</strong> <span id="hora_b">--</span></p>
             </div>
         </div>
-        <button onclick="window.location.href='/historico';">Históricos</button>
+        <button onclick="centerOnUser('b')" style="margin-top: 10px;">Centrar en Usuario B</button>
+        
+        <button onclick="window.location.href='/historico';" style="margin-top: 20px;">Históricos</button>
     </div>
 
     <!-- Botón de flecha para abrir/cerrar el menú -->
@@ -47,6 +51,7 @@
     <script src="/js/index.js"></script> <!-- Enlace al archivo JS externo -->
 </body>
 </html>
+
 
 
 

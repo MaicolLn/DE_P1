@@ -9,7 +9,7 @@ L.control.zoom({
     position: 'topright' // Coloca el control de zoom en la esquina superior derecha
 }).addTo(map);
 
-let userHasZoomed = false;
+let centeredUser = null; // Variable para almacenar el usuario centrado actualmente
 
 window.addEventListener('load', () => {
     document.getElementById('sidebar').classList.remove('closed');
@@ -18,9 +18,19 @@ window.addEventListener('load', () => {
     document.getElementById('map').classList.add('sidebar-open');
 });
 
-// Eventos para rastrear si el usuario ha hecho zoom o movido el mapa
-map.on('zoomstart', () => { userHasZoomed = true; });
-map.on('movestart', () => { userHasZoomed = true; });
+// Función para centrar el mapa en el usuario seleccionado al presionar el botón
+function centerOnUser(user) {
+    centeredUser = user; // Actualiza el usuario centrado
+    fetchData(); // Llama a fetchData para centrar el mapa inmediatamente en el usuario
+}
+
+// Eventos para desactivar el centrado cuando el usuario hace zoom o mueve el mapa
+map.on('zoomstart', () => {
+    centeredUser = null; // Desactivar el centrado
+});
+map.on('movestart', () => {
+    centeredUser = null; // Desactivar el centrado
+});
 
 // Diccionario para almacenar las polilíneas, las coordenadas y los marcadores de cada usuario
 const userPolylines = {};
@@ -103,8 +113,9 @@ function fetchData() {
                 }
             }
 
-            if (!userHasZoomed) {
-                map.setView([lat, lon], 17);
+            // Centrar el mapa en el usuario seleccionado si corresponde
+            if (centeredUser === id_user) {
+                map.setView([lat, lon], 17); // Centrado inmediato
             }
         })
         .catch(error => {
@@ -141,3 +152,11 @@ document.getElementById('toggle-button').addEventListener('click', function() {
         map.invalidateSize();
     }, 300);
 });
+
+
+
+
+
+
+
+
