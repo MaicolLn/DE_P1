@@ -1,6 +1,6 @@
 const map = L.map('map', {
     zoomControl: false // Desactiva el control de zoom por defecto
-}).setView([0, 0], 17);
+}).setView([11.018055, -74.851111], 13);
 
 // Configuración del tile layer de Leaflet usando OpenStreetMap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -152,7 +152,6 @@ document.getElementById('toggle-button').addEventListener('click', function() {
         map.invalidateSize();
     }, 300);
 });
-
 
 
 
