@@ -27,7 +27,7 @@ while True:
         fila["hora"] = now_colombia.strftime("%H:%M:%S")
         payload = json.dumps(fila).encode('utf-8')
         sock.sendto(payload, (udp_ip, udp_port))
-        print(f"Payload enviado: {payload}")
+        print(f"Payload: {payload}")
         time.sleep(2)  # Esperar 2 segundos antes de enviar el siguiente payload
 
 # Cerrar el socket (no se alcanzará debido al bucle infinito)
