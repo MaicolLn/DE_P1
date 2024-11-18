@@ -246,6 +246,6 @@ function updateSliderForUser(userId) {
             <b>Hora:</b> ${dataPoint.Hora}<br>
             <b>RPM:</b> ${dataPoint.rpm || 'No disponible'}
         `;
-        marker.bindPopup(popupContent).openPopup();
+        marker.getPopup().setContent(popupContent);
     });
 }
