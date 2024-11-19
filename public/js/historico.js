@@ -1,4 +1,4 @@
-const map = L.map('map',{
+const map = L.map('map', {
     zoomControl: false // Desactiva el control de zoom por defecto
 }).setView([11.018055, -74.851111], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -34,10 +34,10 @@ function getCurrentDateTime() {
 }
 
 // Actualiza el valor máximo de las fechas dinámicamente cuando el usuario hace clic
-document.getElementById('startDate').addEventListener('focus', function() {
+document.getElementById('startDate').addEventListener('focus', function () {
     this.max = getCurrentDateTime(); // Actualizar el máximo para la fecha de inicio
 });
-document.getElementById('endDate').addEventListener('focus', function() {
+document.getElementById('endDate').addEventListener('focus', function () {
     this.max = getCurrentDateTime(); // Actualizar el máximo para la fecha de fin
 });
 
@@ -50,7 +50,7 @@ dateInputs.forEach(input => {
 });
 
 // Mostrar la sección de fecha y hora final al seleccionar una fecha inicial
-document.getElementById('startDate').addEventListener('change', function() {
+document.getElementById('startDate').addEventListener('change', function () {
     const startDate = new Date(this.value); // Fecha inicial seleccionada
     const endDateInput = document.getElementById('endDate'); // Campo de fecha final
     const endDate = new Date(endDateInput.value); // Fecha final actual
@@ -73,7 +73,7 @@ document.getElementById('startDate').addEventListener('change', function() {
     }
 });
 
-document.getElementById('endDate').addEventListener('change', function() {
+document.getElementById('endDate').addEventListener('change', function () {
     const endDate = new Date(this.value);
     const startDate = new Date(document.getElementById('startDate').value);
     const startDateInput = document.getElementById('startDate');
@@ -97,23 +97,23 @@ document.getElementById('endDate').addEventListener('change', function() {
 });
 
 // Establecer los valores máximos inicialmente y dinámicamente al cargar el contenido
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const currentDateTime = getCurrentDateTime();
     document.getElementById('startDate').max = currentDateTime;
     document.getElementById('endDate').max = currentDateTime;
 });
 
-document.getElementById('historicalForm').addEventListener('submit', function(e) {
+document.getElementById('historicalForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
     clearPreviousResults();
 
     const startDateTime = document.getElementById('startDate').value;
     const endDateTime = document.getElementById('endDate').value;
-    
+
     const userIds = Array.from(document.querySelectorAll('input[name="userIds"]:checked'))
         .map(checkbox => checkbox.value);
-    
+
     if (userIds.length === 0) {
         alert('Por favor, selecciona al menos un usuario.');
         return;
@@ -133,32 +133,43 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
             data.forEach((item) => {
                 const coordinates = item.records.map(point => [point.Latitud, point.Longitud]);
                 const color = item.id_user === 'a' ? 'blue' : 'green';
-
-                const polyline = L.polyline(coordinates, { color }).addTo(map);
-                polylines.push(polyline);
-                map.fitBounds(coordinates);
-
-                sliderData[item.id_user] = item.records;
-
-                const marker = L.marker(coordinates[0], { icon: customIcon }).addTo(map);
-                marker.bindPopup(`Usuario ${item.id_user}`);
-                markers[item.id_user] = marker;
-
-                const startMarker = L.marker(coordinates[0], {
-                    icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/00ff00/marker.png', iconSize: [25, 41] })
-                }).addTo(map).bindPopup(`Inicio - Usuario ${item.id_user}`);
-                
-                const endMarker = L.marker(coordinates[coordinates.length - 1], {
-                    icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/ff0000/marker.png', iconSize: [25, 41] })
-                }).addTo(map).bindPopup(`Fin - Usuario ${item.id_user}`);
-
-                startEndMarkers.push(startMarker, endMarker);
+            
+                // Solo agregar datos si hay coordenadas
+                if (coordinates.length > 0) {
+                    const polyline = L.polyline(coordinates, { color }).addTo(map);
+                    polylines.push(polyline);
+                    map.fitBounds(coordinates);
+            
+                    sliderData[item.id_user] = item.records;
+            
+                    // Crear o actualizar el marcador inicial para este usuario
+                    if (!markers[item.id_user]) {
+                        const marker = L.marker(coordinates[0], { icon: customIcon }).addTo(map);
+                        marker.bindPopup(`Usuario ${item.id_user}`);
+                        markers[item.id_user] = marker;
+                    } else {
+                        markers[item.id_user].setLatLng(coordinates[0]);
+                    }
+            
+                    // Crear marcadores de inicio y fin
+                    const startMarker = L.marker(coordinates[0], {
+                        icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/00ff00/marker.png', iconSize: [25, 41] })
+                    }).addTo(map).bindPopup(`Inicio - Usuario ${item.id_user}`);
+            
+                    const endMarker = L.marker(coordinates[coordinates.length - 1], {
+                        icon: L.icon({ iconUrl: 'https://img.icons8.com/ios-filled/50/ff0000/marker.png', iconSize: [25, 41] })
+                    }).addTo(map).bindPopup(`Fin - Usuario ${item.id_user}`);
+            
+                    startEndMarkers.push(startMarker, endMarker);
+                }
             });
+            
+            
 
             const sliderUserSelection = document.getElementById('slider-user-selection');
             sliderUserSelection.innerHTML = '';
 
-            if (userIds.includes('a')) {
+            if (userIds.includes('a') && sliderData['a'] && sliderData['a'].length > 0) {
                 const buttonA = document.createElement('button');
                 buttonA.type = 'button';
                 buttonA.id = 'user-a';
@@ -167,7 +178,7 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
                 sliderUserSelection.appendChild(buttonA);
             }
 
-            if (userIds.includes('b')) {
+            if (userIds.includes('b') && sliderData['b'] && sliderData['b'].length > 0) {
                 const buttonB = document.createElement('button');
                 buttonB.type = 'button';
                 buttonB.id = 'user-b';
@@ -176,7 +187,7 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
                 sliderUserSelection.appendChild(buttonB);
             }
 
-            sliderUserSelection.style.display = 'block';
+            sliderUserSelection.style.display = sliderUserSelection.childNodes.length > 0 ? 'block' : 'none';
         })
         .catch(err => console.error('Error fetching data:', err));
 });
@@ -184,13 +195,13 @@ document.getElementById('historicalForm').addEventListener('submit', function(e)
 function clearPreviousResults() {
     polylines.forEach(polyline => map.removeLayer(polyline));
     polylines = [];
-    
+
     Object.values(markers).forEach(marker => map.removeLayer(marker));
     markers = {};
-    
+
     startEndMarkers.forEach(marker => map.removeLayer(marker));
     startEndMarkers = [];
-    
+
     sliderData = {};
     selectedUser = null;
 
@@ -216,7 +227,7 @@ function updateSliderForUser(userId) {
     const initialPoint = userData[0];
     const marker = markers[userId];
     const initialLatLng = [initialPoint.Latitud, initialPoint.Longitud];
-    
+
     marker.setLatLng(initialLatLng);
     map.setView(initialLatLng);
 
@@ -249,3 +260,5 @@ function updateSliderForUser(userId) {
         marker.getPopup().setContent(popupContent);
     });
 }
+
+
