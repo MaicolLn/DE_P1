@@ -164,7 +164,6 @@ document.getElementById('historicalForm').addEventListener('submit', function (e
                 }
             });
             
-            
 
             const sliderUserSelection = document.getElementById('slider-user-selection');
             sliderUserSelection.innerHTML = '';
@@ -260,5 +259,8 @@ function updateSliderForUser(userId) {
         marker.getPopup().setContent(popupContent);
     });
 }
+
+
+
 
 
